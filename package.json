@@ -1,0 +1,35 @@
+{
+    "name": "MOSOEsportsSite",
+    "version": "1.0.0",
+    "description": "A TypeScript project",
+    "main": "src/server/index.ts",
+    "scripts": {
+        "build": "tsc",
+        "start": "ts-node -r tsconfig-paths/register src/server/index.ts",
+        "test": "jest"
+    },
+    "dependencies": {
+        "@dotenvx/dotenvx": "^1.45.1",
+        "@types/redis": "^4.0.10",
+        "axios": "^1.11.0",
+        "canvas": "^3.2.0",
+        "discord.js": "^14.18.0",
+        "express": "^5.2.1",
+        "mongodb": "^6.16.0",
+        "node-fetch": "^3.3.2",
+        "node-html-to-image": "^5.0.0",
+        "redis": "^5.10.0",
+        "reflect-metadata": "^0.2.2",
+        "ts-node": "^10.9.2",
+        "typescript": "^5.9.3"
+    },
+    "devDependencies": {
+        "@types/express": "^5.0.3",
+        "@types/node": "^26.6.3",
+        "tsconfig-paths": "^4.2.0"
+    },
+    "allowScripts": {
+        "canvas@3.2.3": true,
+        "puppeteer@23.2.2": true
+    }
+}
