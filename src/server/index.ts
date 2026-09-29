@@ -10,7 +10,23 @@ export class Server {
         const app = this.expressHandler.getApp()
 
         app.use("/", (req, res) => {
-            res.sendFile("public/views/index.html", {"root": '.'})
+            const url = req.url
+
+            let splitURL = url.slice(1,url.length).split("/")
+
+            console.log(splitURL)
+
+            switch (splitURL[0]) {
+                case "": {
+                    res.sendFile("public/views/index.html", {"root": '.'})
+                } break;
+                case "api": {
+                    console.log("API Request")
+                } break;
+                case "about": {
+                    
+                } break;
+            }
         })
     }
 }
