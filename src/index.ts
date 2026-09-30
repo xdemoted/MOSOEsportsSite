@@ -6,7 +6,23 @@ require('@dotenvx/dotenvx').config()
 Values specified in .env
 */
 const defaults = {
-    APP_PORT: "3000"
+    APP_PORT: "3000",
+    BASE_URL: "http://localhost:25551"
+}
+
+const requires = [
+    "CLIENT_ID",
+    "CLIENT_SECRET"
+]
+
+let missing = ""
+
+requires.forEach(str => {
+    if (!process.env[str]) missing += `\nMissing Variable: ${str}`;
+})
+
+if (missing != "") {
+    throw new Error(missing)
 }
 
 process.env = { ...defaults, ...process.env }
