@@ -1,22 +1,28 @@
 import { Request, Response } from "express";
 import { Singleton } from "src/container/Singleton";
 import axios from 'axios';
+import { DiscordHandler } from "../discord/DiscordHandler";
+import { TokenResponse } from "src/server/types/discord/TokenResponse";
+
+const OAUTH_REDIRECT_URI = "http://localhost:25551/api/auth/callback"
 
 @Singleton
 export class OAuthHandler {
+    constructor (
+        private discordHandler: DiscordHandler
+    ) {}
+
     public async handleRequest(pathList: string[], req: Request<{}, any, any, any, Record<string, any>>, res: Response<any, Record<string, any>>) {
-        console.log("OAuth Handler")
         if (pathList.length < 3) return;
 
         if (pathList[2] == "redirect") {
             console.log("OAuth Redirect")
             const rootURL = "https://discord.com/oauth2/authorize"
-            //?client_id=1554522860456775812&response_type=code&redirect_uri=http%3A%2F%2Flocalhost%3A25551%2Fapi%2Foauth&scope=email+identify
 
             const options = {
                 client_id: process.env.CLIENT_ID as string,
                 response_type: "code",
-                redirect_uri: "http://localhost:25551/api/auth/callback",
+                redirect_uri: OAUTH_REDIRECT_URI,
                 scope: "email identify"
             };
 
@@ -28,32 +34,17 @@ export class OAuthHandler {
             try {
                 const code = req.query.code
                 console.log(code)
-                if (!code) return;
+                if (typeof code !== "string") {
+                    return res.status(400).json({ error: "Missing authorization code" })
+                }
 
-                const url = "https://discord.com/api/oauth2/token"
-
-                const data = new URLSearchParams({
-                    grant_type: 'authorization_code',
-                    code: code,
-                    redirect_uri: 'http://localhost:25551/api/auth/token'
-                });
-
-                const response = (await axios.post(url,
-                    data.toString(),
-                    {
-                        headers: {
-                            'Content-Type': 'application/x-www-form-urlencoded'
-                        },
-                        auth: {
-                            username: process.env.CLIENT_ID as string,
-                            password: process.env.CLIENT_SECRET as string
-                        }
-                    }
-                )).data
+                const response = await this.discordHandler.getToken(code)
 
                 console.log(response)
+
+                console.log(await this.discordHandler.getUser(response.access_token))
             } catch (err) {
-                res.status(500).json({ error: err instanceof Error ? err.message : String(err) })
+                return res.status(500).json({ error: err instanceof Error ? err.message : String(err) })
             }
             res.redirect("/")
         }
