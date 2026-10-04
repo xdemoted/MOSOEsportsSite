@@ -34,7 +34,7 @@ export class OAuthHandler {
             try {
                 const code = req.query.code
                 console.log(code)
-                if (typeof code !== "string") {
+                if (typeof code !== "string") {//
                     return res.status(400).json({ error: "Missing authorization code" })
                 }
 
