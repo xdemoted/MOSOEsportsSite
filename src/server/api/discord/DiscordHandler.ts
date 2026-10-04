@@ -1,17 +1,19 @@
 import { Singleton } from "src/container/Singleton";
 import { TokenResponse } from "src/server/types/discord/TokenResponse";
 import axios from "axios"
+import { UserResponse } from "src/server/types/discord/UserResponse";
 
 @Singleton
 export class DiscordHandler {
     private OAUTH_REDIRECT_URI = process.env.BASE_URL + "/api/auth/callback";
 
-    public async getUser(accessToken: string) {
+    public async getUser(accessToken: string): Promise<UserResponse> {
         const res = await fetch('https://discord.com/api/v10/users/@me', {
             headers: {
                 Authorization: `Bearer ${accessToken}`
             }
         });
+
         return res.json();
     }
 

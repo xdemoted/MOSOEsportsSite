@@ -44,7 +44,8 @@ export class OAuthRouter {
 
                 console.log(response)
 
-                console.log(await this.discordHandler.getUser(response.access_token))
+                const user = await this.discordHandler.getUser(response.access_token)
+                console.log(user)
             } catch (err) {
                 return res.status(500).json({ error: err instanceof Error ? err.message : String(err) })
             }
