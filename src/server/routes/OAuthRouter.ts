@@ -1,21 +1,21 @@
 import { Request, Response } from "express";
 import { Singleton } from "src/container/Singleton";
 import axios from 'axios';
-import { DiscordHandler } from "../discord/DiscordHandler";
+import { DiscordHandler } from "../api/discord/DiscordHandler";
 import { TokenResponse } from "src/server/types/discord/TokenResponse";
+import { ExpressHandler } from "src/server/handler/ExpressHandler";
 
 const OAUTH_REDIRECT_URI = "http://localhost:25551/api/auth/callback"
 
 @Singleton
-export class OAuthHandler {
-    constructor (
-        private discordHandler: DiscordHandler
-    ) {}
+export class OAuthRouter {
+    constructor(
+        private discordHandler: DiscordHandler,
+        private expressHandler: ExpressHandler
+    ) {
+        const app = this.expressHandler.getApp()
 
-    public async handleRequest(pathList: string[], req: Request<{}, any, any, any, Record<string, any>>, res: Response<any, Record<string, any>>) {
-        if (pathList.length < 3) return;
-
-        if (pathList[2] == "redirect") {
+        app.get("/api/auth/redirect", (req, res) => {
             console.log("OAuth Redirect")
             const rootURL = "https://discord.com/oauth2/authorize"
 
@@ -30,7 +30,9 @@ export class OAuthHandler {
 
             const url = `${rootURL}?${queryString}`
             res.send(url)
-        } else if (pathList[2] == "callback") {
+        })
+
+        app.get("/api/auth/callback", async (req, res) => {
             try {
                 const code = req.query.code
                 console.log(code)
@@ -47,6 +49,6 @@ export class OAuthHandler {
                 return res.status(500).json({ error: err instanceof Error ? err.message : String(err) })
             }
             res.redirect("/")
-        }
+        })
     }
 }
