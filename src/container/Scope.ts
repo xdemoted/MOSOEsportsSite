@@ -63,7 +63,6 @@ export class Scope {
                             const dependencyNames = this.listDependencies(exported)
                                 .map((dep: any) => (dep && dep.name ? dep.name : undefined))
                                 .filter((name: string): name is string => Boolean(name))
-
                             classes.push(new Bean(exported.name, dependencyNames, exported))
                         }
                     }
@@ -229,6 +228,11 @@ export class Scope {
             throw new Error(`No bean found for class: ${clazz.name}`)
         }
         return beans.map(b => b.instance as T)
+    }
+
+    public async getAsync<T>(clazz: abstract new (...args: unknown[]) => T): Promise<T[]> {
+        await this.awaitComplete()
+        return this.get(clazz)
     }
 
     public async awaitComplete(): Promise<void> {

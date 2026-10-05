@@ -4,6 +4,8 @@ import axios from 'axios';
 import { DiscordHandler } from "../api/discord/DiscordHandler";
 import { TokenResponse } from "src/server/types/discord/TokenResponse";
 import { ExpressHandler } from "src/server/handler/ExpressHandler";
+import { StorageHandler } from "../handler/StorageHandler";
+import { UserCredentials } from "../types/storage/UserCredentials";
 
 const OAUTH_REDIRECT_URI = "http://localhost:25551/api/auth/callback"
 
@@ -11,7 +13,8 @@ const OAUTH_REDIRECT_URI = "http://localhost:25551/api/auth/callback"
 export class OAuthRouter {
     constructor(
         private discordHandler: DiscordHandler,
-        private expressHandler: ExpressHandler
+        private expressHandler: ExpressHandler,
+        private storageHandler: StorageHandler
     ) {
         const app = this.expressHandler.getApp()
 
@@ -45,7 +48,8 @@ export class OAuthRouter {
                 console.log(response)
 
                 const user = await this.discordHandler.getUser(response.access_token)
-                console.log(user)
+                
+                storageHandler.updateUser(UserCredentials.fromDiscordResponse(user, response.access_token, response.refresh_token, response.expires_in))
             } catch (err) {
                 return res.status(500).json({ error: err instanceof Error ? err.message : String(err) })
             }

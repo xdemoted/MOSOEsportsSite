@@ -1,45 +1,43 @@
 import { Scope } from "src/container/Scope";
 import { Singleton } from "src/container/Singleton";
 import { DataSource } from "../types/storage/DataSource";
+import { CompleteableFuture } from "src/utility/CompletableFuture";
 
 @Singleton
 export class StorageHandler {
-    private dataHandler?: DataSource;
+    private dataHandler: CompleteableFuture<DataSource> = new CompleteableFuture<DataSource>();
 
     constructor(
         private scope: Scope
-    ) {}
+    ) {
+        scope.getAsync<DataSource>(DataSource).then((handlers) => {
+            handlers.forEach((handler) => {
+                if (handler.getSourceName() === process.env.STORAGE_TYPE) {
+                    this.dataHandler?.complete(handler)
+                }
+            })
 
-    private getDataHandler(): DataSource {
-        if (this.dataHandler) return this.dataHandler
-
-        const source = process.env.STORAGE_TYPE
-        let dataHandler: DataSource | undefined
-
-        this.scope.get<DataSource>(DataSource).forEach((handler) => {
-            if (handler.getSourceName() === source) {
-                dataHandler = handler
+            if (!this.dataHandler) {
+                throw new Error(`No data source found for ${process.env.STORAGE_TYPE}`)
             }
+
+            this.dataHandler.onComplete(dataSource => dataSource.init())
         })
-
-        if (!dataHandler) {
-            throw new Error(`No data source found for ${source}`)
-        }
-
-        dataHandler.init()
-        this.dataHandler = dataHandler
-        return dataHandler
     }
 
-    public getUser(id: string) {
-        return this.getDataHandler().getUser(id)
+    private async getDataHandler(): Promise<DataSource> {
+        return await this.dataHandler.getValue()
     }
 
-    public removeUser(id: string) {
-        return this.getDataHandler().removeUser(id)
+    public async getUser(id: string) {
+        return (await this.getDataHandler()).getUser(id)
     }
 
-    public updateUser(user: any) {
-        return this.getDataHandler().updateUser(user)
+    public async removeUser(id: string) {
+        return (await this.getDataHandler()).removeUser(id)
+    }
+
+    public async updateUser(user: any) {
+        return (await this.getDataHandler()).updateUser(user)
     }
 }

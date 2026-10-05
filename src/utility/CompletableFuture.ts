@@ -11,6 +11,16 @@ export class CompleteableFuture<T> {
         this.listeners.push(listener);
     }
 
+    public async getValue(): Promise<T> {
+        if (this.value !== undefined) {
+            return this.value;
+        }
+        
+        return new Promise<T>((resolve) => {
+            this.onComplete(resolve);
+        });
+    }
+
     public async complete(value: T): Promise<void> {
         for (const listener of this.listeners) {
             listener(value);

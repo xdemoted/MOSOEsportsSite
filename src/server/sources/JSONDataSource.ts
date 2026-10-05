@@ -65,6 +65,7 @@ export class JSONDataSource extends DataSource {
     public save() {
         if (this.isSaving) return false
         this.isSaving = true
+        console.log("Saving changes to data.jsonl...")
         const changesToSave = new Map(this.changes)
         const changesToWrite = new Map(changesToSave)
         let writeFailed = false
