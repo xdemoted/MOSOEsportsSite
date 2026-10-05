@@ -1,0 +1,17 @@
+https://code.visualstudio.com/download?_exp_download=fb315fc982
+https://git-scm.com/
+https://nodejs.org/en
+
+Clone repo
+
+npm i
+
+npm i -g ts-node
+
+Restart VS Code for missing commands
+
+Installo Code Runner by Jun Han
+https://marketplace.visualstudio.com/items?itemName=formulahendry.code-runner
+
+PS C:\Users\MorenoL002\Documents\Github\MOSOEsportsSite> git config --global user.email "luismoreno102002@gmail.com"
+PS C:\Users\MorenoL002\Documents\Github\MOSOEsportsSite> git config --global user.name luismoreno
