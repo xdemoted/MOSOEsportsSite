@@ -1,3 +1,5 @@
+import { UserResponse } from "../discord/UserResponse";
+
 export class UserCredentials {
     private expires_at: number;
 
@@ -38,6 +40,17 @@ export class UserCredentials {
 
     public getRefreshToken() {
         return this.refresh_token
+    }
+
+    public static fromDiscordResponse(response: UserResponse, accessToken: string, refreshToken: string, expires_in: number): UserCredentials {
+        return new UserCredentials(
+            response.id,
+            response.username,
+            response.global_name,
+            accessToken, // access_token
+            refreshToken, // refresh_token
+            expires_in // expires_in
+        )
     }
 
     public static fromJSON(parsedJSON: UserCredentials): UserCredentials {

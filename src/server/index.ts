@@ -10,7 +10,11 @@ export class Server {
 
         const app = this.expressHandler.getApp()
 
-        app.use("/", (req, res) => {
+        app.use("/", (req, res, next) => {
+            if (req.path.length > 1) {
+                return next()
+            }
+
             res.sendFile("public/views/index.html", { "root": '.' })
         })
     }

@@ -3,6 +3,7 @@ export interface UserResponse {
     username: string,
     avatar: string,
     discriminator: string,
+    global_name: string,
     public_flags: number,
     flags: number,
     banner: string,

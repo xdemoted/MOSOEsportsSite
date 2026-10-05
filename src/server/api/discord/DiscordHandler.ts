@@ -29,7 +29,7 @@ export class DiscordHandler {
 
     public async refreshToken(refreshToken: string): Promise<TokenResponse> {
         const data = new URLSearchParams({
-            grant_type: 'authorization_code',
+            grant_type: 'refresh_token',
             refresh_token: refreshToken
         });
 

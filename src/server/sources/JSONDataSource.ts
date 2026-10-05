@@ -12,6 +12,10 @@ export class JSONDataSource extends DataSource {
     private regex = /^\d+$/
     private isSaving = false;
 
+    public getSourceName(): string {
+        return "JSON"
+    }
+
     public override init(): void {
         if (!fs.existsSync("./data.jsonl")) {
             fs.writeFileSync("./data.jsonl", "")
@@ -20,7 +24,7 @@ export class JSONDataSource extends DataSource {
         setInterval(() => {
             if (this.isSaving || this.changes.size == 0) return;
             this.save()
-        }, 10 * 60 * 1000)
+        }, 1 * 10 * 1000)
     }
 
     public override getUser(id: string): CompleteableFuture<UserCredentials | undefined> {
@@ -123,11 +127,6 @@ export class JSONDataSource extends DataSource {
         return true;
     }
 }
-fs.rename('data.jsonl.tmp', 'data.jsonl', (error) => {
-    if (error) {
-        console.error('Failed to replace data.jsonl:', error)
-    }
-})
 /*
 console.log(JSON.stringify(new UserCredentials("316243027423395841", "demoted.", "Eve", "", "", 604800)))
 const source = new JSONDataSource()

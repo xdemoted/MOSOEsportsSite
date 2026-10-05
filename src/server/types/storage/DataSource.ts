@@ -7,4 +7,5 @@ export abstract class DataSource {
     public abstract getUser(id: string): CompleteableFuture<UserCredentials | undefined>;
     public abstract removeUser(id: string): boolean;
     public abstract updateUser(user: UserCredentials): boolean;
+    public abstract getSourceName(): string;
 }
