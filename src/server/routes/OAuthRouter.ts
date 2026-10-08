@@ -7,7 +7,7 @@ import { ExpressHandler } from "src/server/handler/ExpressHandler";
 import { StorageHandler } from "../handler/StorageHandler";
 import { UserCredentials } from "../types/storage/UserCredentials";
 
-const OAUTH_REDIRECT_URI = "http://localhost:25551/api/auth/callback"
+const OAUTH_REDIRECT_URI = process.env.BASE_URL + "/api/auth/callback"
 
 @Singleton
 export class OAuthRouter {
@@ -49,7 +49,7 @@ export class OAuthRouter {
 
                 const user = await this.discordHandler.getUser(response.access_token)
                 
-                storageHandler.updateUser(UserCredentials.fromDiscordResponse(user, response.access_token, response.refresh_token, response.expires_in))
+                this.storageHandler.updateUser(UserCredentials.fromDiscordResponse(user, response.access_token, response.refresh_token, response.expires_in))
             } catch (err) {
                 return res.status(500).json({ error: err instanceof Error ? err.message : String(err) })
             }

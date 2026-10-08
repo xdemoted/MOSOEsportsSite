@@ -5,10 +5,10 @@ import { CompleteableFuture } from "src/utility/CompletableFuture";
 import { DataSource } from "../types/storage/DataSource";
 
 @Singleton
-export default class MongoDataSource extends DataSource {
+export default class MongoDataSource {
     private database: CompleteableFuture<Db> = new CompleteableFuture<Db>();
     private collections: {[id: string]: Collection} = {};
-
+    /*
     public override getSourceName() {
         return "MONGO"
     }
@@ -18,17 +18,17 @@ export default class MongoDataSource extends DataSource {
     }
 
     public override async getUser(id: string) {
-
+        throw new Error("Not implemented");
     }
 
     public override async updateUser(user: UserCredentials) {
-
+        throw new Error("Not implemented");
     }
 
     public override async removeUser(id: string) {
-
+        throw new Error("Not implemented");
     }
-
+    */
     public async connect(): Promise<void> {
         const uri = process.env.DB_CONN_STRING;
 
@@ -50,7 +50,7 @@ export default class MongoDataSource extends DataSource {
             throw new Error("Failed to select the database.");
         }
 
-        
+
 
         process.on('SIGINT', async () => {
             await client.close();
