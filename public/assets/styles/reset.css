@@ -22,10 +22,19 @@ table, caption, tbody, tfoot, thead, tr, th, td {
 :focus {
 	outline: 0;
 }
+html, body {
+	height: 100%;
+}
 body {
+	display: flex;
+	flex-direction: column;
 	line-height: 1;
 	color: black;
 	background: white;
+}
+
+#content {
+	flex: 1 0 auto;
 }
 ol, ul {
 	list-style: none;
