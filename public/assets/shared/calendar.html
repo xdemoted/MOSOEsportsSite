@@ -1,0 +1,138 @@
+<div class="calendar">
+    <div class="sunday weekday">
+        <h1>Sunday</h1>
+        <div class="day">
+            <div class="number">31</div>
+            <div class="events">
+                <p class="event">Mario Kart 7 PM - 8 PM</p>
+            </div>
+        </div>
+        <div class="day"></div>
+        <div class="day"></div>
+        <div class="day"></div>
+        <div class="day"></div>
+    </div>
+    <div class="monday weekday">
+        <h1>Monday</h1>
+        <div class="day"></div>
+        <div class="day"></div>
+        <div class="day"></div>
+        <div class="day"></div>
+        <div class="day"></div>
+    </div>
+    <div class="tuesday weekday">
+        <h1>Tuesday</h1>
+        <div class="day"></div>
+        <div class="day"></div>
+        <div class="day"></div>
+        <div class="day"></div>
+        <div class="day"></div>
+    </div>
+    <div class="wednesday weekday">
+        <h1>Wednesday</h1>
+        <div class="day"></div>
+        <div class="day"></div>
+        <div class="day"></div>
+        <div class="day"></div>
+        <div class="day"></div>
+    </div>
+    <div class="thursday weekday">
+        <h1>Thursday</h1>
+        <div class="day"></div>
+        <div class="day"></div>
+        <div class="day"></div>
+        <div class="day"></div>
+        <div class="day"></div>
+    </div>
+    <div class="friday weekday">
+        <h1>Friday</h1>
+        <div class="day"></div>
+        <div class="day"></div>
+        <div class="day"></div>
+        <div class="day"></div>
+        <div class="day"></div>
+    </div>
+    <div class="saturday weekday">
+        <h1>Saturday</h1>
+        <div class="day"></div>
+        <div class="day"></div>
+        <div class="day"></div>
+        <div class="day"></div>
+        <div class="day"></div>
+    </div>
+</div>
+
+<style>
+    @font-face {
+        font-family: "Avenir";
+        src: url("fonts/avenir.woff") format("woff")
+    }
+
+    .calendar {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        gap: 10px;
+        font-family: "Avenir";
+        font-size: 1vw;
+        color: white;
+    }
+
+    .calendar .weekday {
+        text-align: center;
+        position: relative;
+        isolation: isolate;
+        background-color: #333;
+        clip-path: polygon(0 30px, 8px 0, 100% 0, 100% calc(100% - 30px), calc(100% - 8px) 100%, 0 100%);
+        padding: 5px;
+        padding-bottom: 30px
+    }
+
+    .calendar .weekday::before {
+        content: "";
+        position: absolute;
+        inset: 2px;
+        background: #222;
+        clip-path: polygon(0 30px, 8px 0, 100% 0, 100% calc(100% - 30px), calc(100% - 8px) 100%, 0 100%);
+        z-index: -1;
+    }
+
+    .calendar .weekday h1 {
+        font-size: 1.2em;
+        padding-top: 0.5vw;
+        padding-bottom: 0.5vw;
+        border-bottom: 1px solid #333;
+        width: 100%;
+    }
+
+    .calendar .weekday .day {
+        margin: 5px;
+        text-align: center;
+        aspect-ratio: 1 / 1;
+        position: relative;
+        isolation: isolate;
+        background-color: #333;
+        border: 2px solid #555;
+    }
+
+    .calendar .weekday .day .number {
+        width: 30%;
+        margin-left: auto;
+        border-bottom: 1px solid #555;
+        margin-bottom: 5px;
+    }
+
+    .calendar .weekday .day .events {
+        width: 100%;
+        height: 70%;
+    }
+
+    .calendar .weekday .day .events .event {
+        padding: 0;
+        margin: 0;
+        background-color: #006931;
+        font-size: 0.75em;
+        border-radius: 5px;
+        margin-left: 5px;
+        margin-right: 5px;
+    }
+</style>

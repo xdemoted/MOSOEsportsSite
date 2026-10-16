@@ -56,4 +56,5 @@ async function loadHTML(elementId, filePath) {
 document.addEventListener('DOMContentLoaded', () => {
   loadHTML('header', 'shared/header.html'); // Load header into #header
   loadHTML('footer', 'shared/footer.html'); // Load footer into #footer
+  loadHTML('calendar', 'shared/calendar.html'); // Load insert into #calendar
 });
