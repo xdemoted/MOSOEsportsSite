@@ -16,12 +16,17 @@
             display: flex;
         }
 
-        #navbar div img {
+        #navbar div .bannerwrap img {
             background-color: #003117;
-            width: 170;
+            width: auto;
             padding-right: 20px;
             padding-left: 10px;
             clip-path: polygon(0 0, 100% 0, calc(100% - 20px) 100%, 0 100%);
+        }
+
+        #navbar div .bannerwrap {
+            width: 210px;
+            transition: width 0.5s ease-in-out;
         }
 
         #navbar div ul {
@@ -36,13 +41,15 @@
             color: white;
             font-family: 'Arial';
             text-decoration: unset;
-            margin-left: -20px;
+            margin-left: -21px;
             height: 100%;
             width: 150;
             justify-content: center;
             align-items: center;
             display: flex;
             clip-path: polygon(0 100%, 20px 0, 100% 0, calc(100% - 20px) 100%);
+            font-size: max(16px, 1vw);
+            background-color: #333;
         }
 
         #navbar div a:hover {
@@ -83,7 +90,7 @@
     <div class="logo"></div>
     <div id="navbar">
         <div>
-            <img src="../logo/moso_banner.png">
+            <div class="bannerwrap"><img src="../logo/moso_banner.png"></div>
             <a href="/"><b>Home</b></a>
             <a href="/schedule"><b>Schedule</b></a>
             <a href="/teams"><b>Teams</b></a>
