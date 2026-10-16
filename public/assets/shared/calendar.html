@@ -69,22 +69,31 @@
     }
 
     .calendar {
-        display: grid;
-        grid-template-columns: repeat(7, 1fr);
-        gap: 10px;
+        display: flex;
+        align-items: flex-start;
+        gap: 1vw;
         font-family: "Avenir";
         font-size: 1vw;
         color: white;
     }
 
     .calendar .weekday {
+        flex: 1 1 0;
+        min-width: 0;
         text-align: center;
         position: relative;
         isolation: isolate;
         background-color: #333;
         clip-path: polygon(0 30px, 8px 0, 100% 0, 100% calc(100% - 30px), calc(100% - 8px) 100%, 0 100%);
         padding: 5px;
-        padding-bottom: 30px
+        padding-bottom: 30px;
+        transition: flex-grow 0.25s ease-in-out,
+                    font-size 0.25s ease-in-out;
+    }
+
+    .calendar .weekday:hover {
+        flex-grow: 1.1;
+        font-size: 1.1vw;
     }
 
     .calendar .weekday::before {
@@ -107,11 +116,16 @@
     .calendar .weekday .day {
         margin: 5px;
         text-align: center;
-        aspect-ratio: 1 / 1;
+        height: 10vw;
+        min-width: 10vw;
         position: relative;
         isolation: isolate;
         background-color: #333;
         border: 2px solid #555;
+    }
+
+    .calendar .weekday .day:hover {
+        border: 2px solid #006931
     }
 
     .calendar .weekday .day .number {
