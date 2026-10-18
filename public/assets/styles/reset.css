@@ -1,4 +1,4 @@
-html, body, div, span, applet, object, iframe,
+html, body, div, span, applet, object, iframe, button,
 h1, h2, h3, h4, h5, h6, p, blockquote, pre,
 a, abbr, acronym, address, big, cite, code,
 del, dfn, em, font, img, ins, kbd, q, s, samp,
@@ -17,6 +17,9 @@ table, caption, tbody, tfoot, thead, tr, th, td {
 	vertical-align: baseline;
     overscroll-behavior-y: none;
     overscroll-behavior-x: none;
+}
+button {
+	appearance: none;
 }
 /* remember to define focus styles! */
 :focus {
