@@ -1,64 +1,78 @@
 <div class="calendar">
-    <div class="sunday weekday">
-        <h1>Sunday</h1>
-        <div class="day">
-            <div class="number">31</div>
-            <div class="events">
-                <p class="event">Mario Kart 7 PM - 8 PM</p>
+    <div class="weekday-wrapper">
+        <div class="sunday weekday">
+            <h1>Sunday</h1>
+            <div class="day">
+                <div class="number">31</div>
+                <div class="events">
+                    <p class="event">Mario Kart 7 PM - 8 PM</p>
+                </div>
             </div>
+            <div class="day"></div>
+            <div class="day"></div>
+            <div class="day"></div>
+            <div class="day"></div>
         </div>
-        <div class="day"></div>
-        <div class="day"></div>
-        <div class="day"></div>
-        <div class="day"></div>
     </div>
-    <div class="monday weekday">
-        <h1>Monday</h1>
-        <div class="day"></div>
-        <div class="day"></div>
-        <div class="day"></div>
-        <div class="day"></div>
-        <div class="day"></div>
+    <div class="weekday-wrapper">
+        <div class="monday weekday">
+            <h1>Monday</h1>
+            <div class="day"></div>
+            <div class="day"></div>
+            <div class="day"></div>
+            <div class="day"></div>
+            <div class="day"></div>
+        </div>
     </div>
-    <div class="tuesday weekday">
-        <h1>Tuesday</h1>
-        <div class="day"></div>
-        <div class="day"></div>
-        <div class="day"></div>
-        <div class="day"></div>
-        <div class="day"></div>
+    <div class="weekday-wrapper">
+        <div class="tuesday weekday">
+            <h1>Tuesday</h1>
+            <div class="day"></div>
+            <div class="day"></div>
+            <div class="day"></div>
+            <div class="day"></div>
+            <div class="day"></div>
+        </div>
     </div>
-    <div class="wednesday weekday">
-        <h1>Wednesday</h1>
-        <div class="day"></div>
-        <div class="day"></div>
-        <div class="day"></div>
-        <div class="day"></div>
-        <div class="day"></div>
+    <div class="weekday-wrapper">
+        <div class="wednesday weekday">
+            <h1>Wednesday</h1>
+            <div class="day"></div>
+            <div class="day"></div>
+            <div class="day"></div>
+            <div class="day"></div>
+            <div class="day"></div>
+        </div>
     </div>
-    <div class="thursday weekday">
-        <h1>Thursday</h1>
-        <div class="day"></div>
-        <div class="day"></div>
-        <div class="day"></div>
-        <div class="day"></div>
-        <div class="day"></div>
+    <div class="weekday-wrapper">
+        <div class="thursday weekday">
+            <h1>Thursday</h1>
+            <div class="day"></div>
+            <div class="day"></div>
+            <div class="day"></div>
+            <div class="day"></div>
+            <div class="day"></div>
+        </div>
     </div>
-    <div class="friday weekday">
-        <h1>Friday</h1>
-        <div class="day"></div>
-        <div class="day"></div>
-        <div class="day"></div>
-        <div class="day"></div>
-        <div class="day"></div>
+    <div class="weekday-wrapper">
+        <div class="friday weekday">
+            <h1>Friday</h1>
+            <div class="day"></div>
+            <div class="day"></div>
+            <div class="day"></div>
+            <div class="day"></div>
+            <div class="day"></div>
+        </div>
     </div>
-    <div class="saturday weekday">
-        <h1>Saturday</h1>
-        <div class="day"></div>
-        <div class="day"></div>
-        <div class="day"></div>
-        <div class="day"></div>
-        <div class="day"></div>
+    <div class="weekday-wrapper">
+        <div class="saturday weekday">
+            <h1>Saturday</h1>
+            <div class="day"></div>
+            <div class="day"></div>
+            <div class="day"></div>
+            <div class="day"></div>
+            <div class="day"></div>
+        </div>
     </div>
 </div>
 
@@ -70,29 +84,38 @@
 
     .calendar {
         display: flex;
-        align-items: flex-start;
-        gap: 1vw;
         font-family: "Avenir";
         font-size: 1vw;
         color: white;
     }
 
-    .calendar .weekday {
-        flex: 1 1 0;
-        min-width: 0;
-        text-align: center;
-        position: relative;
-        isolation: isolate;
-        background-color: #333;
-        clip-path: polygon(0 30px, 8px 0, 100% 0, 100% calc(100% - 30px), calc(100% - 8px) 100%, 0 100%);
-        padding: 5px;
-        padding-bottom: 30px;
-        transition: flex-grow 0.25s ease-in-out,
-                    font-size 0.25s ease-in-out;
+    .calendar .weekdays {
+        display: flex;
+        flex: 1;
+        gap: 1vw;
     }
 
-    .calendar .weekday:hover {
-        flex-grow: 1.1;
+    .calendar .weekday-wrapper {
+        flex: 1 0;
+        gap: 1vw;
+        display: flex;
+        justify-content: center;
+    }
+
+    .calendar .weekday {
+        width: 80%;
+        padding: 5px;
+        padding-bottom: 30px;
+        clip-path: polygon(0 30px, 8px 0, 100% 0, 100% calc(100% - 30px), calc(100% - 8px) 100%, 0 100%);
+        text-align: center;
+        position: relative;
+        background-color: #333;
+        transition: width 0.25s ease-in-out,
+            font-size 0.25s ease-in-out;
+    }
+
+    .calendar .weekday-wrapper:hover .weekday {
+        width: 85%;
         font-size: 1.1vw;
     }
 
@@ -117,7 +140,7 @@
         margin: 5px;
         text-align: center;
         height: 10vw;
-        min-width: 10vw;
+        min-width: 80%;
         position: relative;
         isolation: isolate;
         background-color: #333;
