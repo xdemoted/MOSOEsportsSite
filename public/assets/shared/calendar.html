@@ -119,6 +119,10 @@
         font-size: 1.1vw;
     }
 
+    .calendar .weekday-wrapper:hover .weekday .day {
+        
+    }
+
     .calendar .weekday::before {
         content: "";
         position: absolute;
@@ -139,8 +143,8 @@
     .calendar .weekday .day {
         margin: 5px;
         text-align: center;
-        height: 10vw;
-        min-width: 80%;
+        aspect-ratio: 1;
+        width: 85%;
         position: relative;
         isolation: isolate;
         background-color: #333;
@@ -148,7 +152,7 @@
     }
 
     .calendar .weekday .day:hover {
-        border: 2px solid #006931
+        border: 2px solid #006931;
     }
 
     .calendar .weekday .day .number {
