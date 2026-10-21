@@ -14,7 +14,8 @@ const defaults = {
 
 const requires = [
     "CLIENT_ID",
-    "CLIENT_SECRET"
+    "CLIENT_SECRET",
+    "NECC_URI"
 ]
 
 let missing = ""
