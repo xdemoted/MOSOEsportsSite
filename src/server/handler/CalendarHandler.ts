@@ -1,6 +1,8 @@
 import axios from "axios"
 import { CalendarEvent } from "../api/calendar/CalendarEvent";
+import { Singleton } from "src/container/Singleton";
 
+@Singleton
 export class CalendarHandler {
     private NECC_URI = process.env.NECC_URI
     private cachedEvents: CalendarEvent[] | undefined = []
@@ -60,6 +62,21 @@ export class CalendarHandler {
         return this.cachedEvents
     }
 
+    public getCompressedEvents() {
+        let dataString = ""
+        this.cachedEvents?.forEach((calendarEvent, i) => {
+            const data = []
+            data.push(calendarEvent.name)
+            data.push(calendarEvent.start)
+            data.push(calendarEvent.end)
+            data.push(calendarEvent.uri)
+
+            dataString += data.join(";") + "\n"
+        })
+
+        return dataString;
+    }
+
     public static formatISOTime(input: string) {
         const chars = input.split("")
         // 20261020T231521Z
@@ -74,6 +91,3 @@ export class CalendarHandler {
         return Date.parse(chars.join(""))
     }
 }
-
-require('@dotenvx/dotenvx').config()
-new CalendarHandler().getCalendarData()
