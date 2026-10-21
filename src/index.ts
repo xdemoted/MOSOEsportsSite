@@ -9,6 +9,7 @@ const defaults = {
     APP_PORT: "3000",
     BASE_URL: "http://localhost:25551",
     STORAGE_TYPE: "JSON",
+    UPDATE_DELAY: "30"
 }
 
 const requires = [
