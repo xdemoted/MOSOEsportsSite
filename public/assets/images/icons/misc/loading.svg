@@ -1,0 +1,14 @@
+    <svg xmlns="http://www.w3.org/2000/svg" width="100" height="100">
+        <ellipse ry="7.5" rx="7.5" id="svg_1" cy="7.5" cx="50" fill="#b8b8dd" />
+        <ellipse transform="rotate(30 71.25 13.1939)" ry="7.5" rx="7.5" id="svg_9" cy="13.19392" cx="71.25" fill="#b8b8dd" fill-opacity="0.08"/>
+        <ellipse transform="rotate(60 86.9553 28.75)" ry="7.5" rx="7.5" id="svg_19" cy="28.75" cx="86.95533" fill="#b8b8dd" fill-opacity="0.16"/>
+        <ellipse ry="7.5" rx="7.5" id="svg_2" cy="50" cx="92.5" fill="#b8b8dd" fill-opacity="0.24"/>
+        <ellipse transform="rotate(30 86.8061 71.25)" ry="7.5" rx="7.5" id="svg_10" cy="71.25" cx="86.80608" fill="#b8b8dd" fill-opacity="0.32"/>
+        <ellipse transform="rotate(60 71.3993 86.8061)" ry="7.5" rx="7.5" id="svg_20" cy="86.80608" cx="71.39925" fill="#b8b8dd" fill-opacity="0.4"/>
+        <ellipse ry="7.5" rx="7.5" id="svg_3" cy="92.5" cx="50" fill="#b8b8dd" fill-opacity="0.48"/>
+        <ellipse transform="rotate(30 28.75 86.8061)" ry="7.5" rx="7.5" id="svg_11" cy="86.80608" cx="28.75" fill="#b8b8dd" fill-opacity="0.56"/>
+        <ellipse transform="rotate(60 13.3432 71.25)" ry="7.5" rx="7.5" id="svg_21" cy="71.25" cx="13.34317" fill="#b8b8dd" fill-opacity="0.64"/>
+        <ellipse ry="7.5" rx="7.5" id="svg_4" cy="50" cx="7.5" fill="#b8b8dd" fill-opacity="0.72"/>
+        <ellipse transform="rotate(30 13.1939 28.75)" ry="7.5" rx="7.5" id="svg_12" cy="28.75" cx="13.19392" fill="#b8b8dd" fill-opacity="0.8"/>
+        <ellipse transform="rotate(60 28.8993 13.1939)" ry="7.5" rx="7.5" id="svg_22" cy="13.19392" cx="28.89925" fill="#b8b8dd" fill-opacity="0.88" />
+    </svg>

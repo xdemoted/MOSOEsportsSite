@@ -8,7 +8,12 @@
         #calendar {
             padding: 20px;
             background-color: #111;
-            height: 100%;
+            flex: 1 0 auto;
+            overflow: none;
+
+            @media screen and (max-aspect-ratio: 1) {
+                overflow-x: auto;
+            }
         }
     </style>
 </head>
