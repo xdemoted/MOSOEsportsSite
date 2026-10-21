@@ -2,12 +2,7 @@
     <div class="weekday-wrapper">
         <div class="sunday weekday">
             <h1>Sunday</h1>
-            <div class="day">
-                <div class="number">31</div>
-                <div class="events">
-                    <p class="event">Mario Kart 7 PM - 8 PM</p>
-                </div>
-            </div>
+            <div class="day"></div>
             <div class="day"></div>
             <div class="day"></div>
             <div class="day"></div>
@@ -113,7 +108,7 @@
 
     #loadpage img {
         aspect-ratio: 1;
-        width: 100px;
+        width: 75px;
     }
 
     .calendar .weekday-wrapper .weekday {
@@ -163,6 +158,11 @@
         border: 2px solid #555;
     }
 
+    .calendar .weekday-wrapper .weekday .dark {
+        background-color: #333;
+        border: 2px solid #444;
+    }
+
     .calendar .weekday-wrapper .weekday .day:hover {
         border: 2px solid #006931;
     }
@@ -172,6 +172,11 @@
         margin-left: auto;
         border-bottom: 1px solid #555;
         margin-bottom: 5px;
+    }
+
+    .calendar .weekday-wrapper .weekday .dark .number {
+        border-bottom: 1px solid #444;
+        color: #aaa;
     }
 
     .calendar .weekday-wrapper .weekday .day .events {

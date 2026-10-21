@@ -1,5 +1,11 @@
 // includes.js
 
+function getDaysInMonth(month, year) {
+  month = month ? month : new Date().getMonth()
+  year = year ? year : new Date().getFullYear()
+
+  return new Date(year, month, 0).getDate()
+}
 // Function to load HTML content into a target element
 async function loadHTML(elementId, filePath) {
   try {
@@ -58,15 +64,51 @@ async function loadHTML(elementId, filePath) {
               deg = (deg > 360) ? deg - 360 : deg
             }, 25)
 
+            const days = element.querySelectorAll(".day")
+
+            const first = new Date(
+              new Date().getFullYear(),
+              new Date().getMonth(),
+              1
+            )
+
+            first.getDay()
+
+            let h = -first.getDay()
+
+            for (let i = 0; i < 5; i++) {
+              for (let j = 0; j < 7; j++) {
+                const index = j * 5 + i
+                const today = new Date(first)
+                today.setDate(first.getDate() + h++)
+
+                const numberContainer = document.createElement("div")
+                numberContainer.className = "number"
+                numberContainer.innerText = today.getDate()
+                days[index].appendChild(numberContainer)
+
+                const eventContainer = document.createElement("div")
+                eventContainer.className = "events"
+                days[index].appendChild(eventContainer)
+                if (h < 1 || h > getDaysInMonth() + 1) {
+                  days[index].className += " dark"
+                }
+              }
+
+            }
+
             const response = await fetch('/api/calendar');
 
             if (!response.ok) {
               throw new Error("No calendar data found")
             }
 
-            const data = await response.json()
+            const data = await response.text()
 
-            
+            clearInterval(interval)
+            loadpage.remove()
+
+
           }
         }
       }
