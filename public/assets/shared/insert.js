@@ -1,10 +1,11 @@
 // includes.js
 
-function getDaysInMonth(month, year) {
-  month = month ? month : new Date().getMonth()
-  year = year ? year : new Date().getFullYear()
+function getDaysInMonth(month = new Date().getMonth(), year = new Date().getFullYear()) {
+  return new Date(year, month + 1, 0).getDate()
+}
 
-  return new Date(year, month, 0).getDate()
+function getLocalStamp(date) {
+  return date.getFullYear().toString() + "-" + date.getMonth() + "-" + date.getDate()
 }
 // Function to load HTML content into a target element
 async function loadHTML(elementId, filePath) {
@@ -76,6 +77,8 @@ async function loadHTML(elementId, filePath) {
 
             let h = -first.getDay()
 
+            const dateMap = new Map()
+
             for (let i = 0; i < 5; i++) {
               for (let j = 0; j < 7; j++) {
                 const index = j * 5 + i
@@ -90,11 +93,22 @@ async function loadHTML(elementId, filePath) {
                 const eventContainer = document.createElement("div")
                 eventContainer.className = "events"
                 days[index].appendChild(eventContainer)
-                if (h < 1 || h > getDaysInMonth() + 1) {
+
+                if (h < 1 || h > getDaysInMonth(first.getMonth(), first.getFullYear()) + 1) {
                   days[index].className += " dark"
                 }
-              }
 
+                dateMap.set(getLocalStamp(today), {
+                  events: eventContainer,
+                  day: numberContainer
+                })
+              }
+            }
+
+            const today = dateMap.get(getLocalStamp(new Date()))
+
+            if (today) {
+              today.events.parentElement.className += " active"
             }
 
             const response = await fetch('/api/calendar');
@@ -104,6 +118,52 @@ async function loadHTML(elementId, filePath) {
             }
 
             const data = await response.text()
+            data.split("\n").forEach(value => {
+              const values = value.split(";")
+              const event = {
+                name: values[0],
+                start: values[1],
+                end: values[2],
+                uri: values[3]
+              }
+              const date = new Date(event.start * 1000)
+              const day = dateMap.get(getLocalStamp(date))
+
+
+              if (day) {
+                const p = document.createElement("p")
+                p.className = "event"
+                p.innerText = ""
+                const nameParts = event.name.split(": ")
+
+                let color = "#006931"
+                switch (nameParts[0]) {
+                  case "Overwatch": {
+                    color = "#c57a17"
+                  } break;
+                  case "Marvel Rivals": {
+                    color = "#c78f00"
+                  } break;
+                  case "Super Smash Bros": {
+                    color = "#b70903"
+                  } break;
+                  case "Rocket League": {
+                    if (event.name.includes("MSSU Gold")) {
+                      color = "#0065a4"
+                    } else {
+                      color = "#00a4a4"
+                    }
+                  }
+                }
+
+                p.innerText = nameParts[nameParts.length - 1]
+                p.style = `background-color: ${color}`
+
+                day.events.appendChild(p)
+              }
+            })
+
+
 
             clearInterval(interval)
             loadpage.remove()
