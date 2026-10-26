@@ -1,5 +1,6 @@
 <div class="calendar">
-    <div class="weekday-wrapper">
+    <div class="sidebar"></div>
+    <div class="container">
         <div class="sunday weekday">
             <h1>Sunday</h1>
             <div class="day"></div>
@@ -8,8 +9,6 @@
             <div class="day"></div>
             <div class="day"></div>
         </div>
-    </div>
-    <div class="weekday-wrapper">
         <div class="monday weekday">
             <h1>Monday</h1>
             <div class="day"></div>
@@ -18,8 +17,6 @@
             <div class="day"></div>
             <div class="day"></div>
         </div>
-    </div>
-    <div class="weekday-wrapper">
         <div class="tuesday weekday">
             <h1>Tuesday</h1>
             <div class="day"></div>
@@ -28,8 +25,6 @@
             <div class="day"></div>
             <div class="day"></div>
         </div>
-    </div>
-    <div class="weekday-wrapper">
         <div class="wednesday weekday">
             <h1>Wednesday</h1>
             <div class="day"></div>
@@ -38,8 +33,6 @@
             <div class="day"></div>
             <div class="day"></div>
         </div>
-    </div>
-    <div class="weekday-wrapper">
         <div class="thursday weekday">
             <h1>Thursday</h1>
             <div class="day"></div>
@@ -48,8 +41,6 @@
             <div class="day"></div>
             <div class="day"></div>
         </div>
-    </div>
-    <div class="weekday-wrapper">
         <div class="friday weekday">
             <h1>Friday</h1>
             <div class="day"></div>
@@ -58,8 +49,6 @@
             <div class="day"></div>
             <div class="day"></div>
         </div>
-    </div>
-    <div class="weekday-wrapper">
         <div class="saturday weekday">
             <h1>Saturday</h1>
             <div class="day"></div>
@@ -69,9 +58,11 @@
             <div class="day"></div>
         </div>
     </div>
+    <!--
     <div id="loadpage">
         <img class="loadcircle" src="images/icons/misc/loading.svg">
     </div>
+    -->
 </div>
 <style>
     @font-face {
@@ -84,15 +75,36 @@
         font-family: "Avenir";
         font-size: 1vw;
         color: white;
-        height: 100%;
-        aspect-ratio: 2;
         position: relative;
     }
 
-    .calendar .weekday-wrapper {
-        flex: 1 0;
-        gap: 1vw;
+    .calendar .sidebar {
+        min-height: 100%;
+        min-width: 15%;
+        background-color: #222;
+        border-right: 2px solid #333;
+        margin: 0px 10px 0px 0px;
+        padding: 0;
+    }
+
+    @media screen and (max-aspect-ratio: 1) {
+        .calendar {
+            flex-direction: column-reverse;
+            height: 100%;
+        }
+
+        .calendar .sidebar {
+            min-height: auto;
+            height: 100%;
+            margin: 10px 0px 0px 0px;
+        }
+    }
+
+    .calendar .container {
         display: flex;
+        min-width: calc(85% - 10px);
+        flex: 1 0;
+        gap: 0.5vw;
         justify-content: center;
     }
 
@@ -111,7 +123,7 @@
         width: 75px;
     }
 
-    .calendar .weekday-wrapper .weekday {
+    .calendar .container .weekday {
         width: 80%;
         padding: 5px;
         padding-bottom: 30px;
@@ -121,17 +133,9 @@
         background-color: #333;
         transition: width 0.25s ease-in-out,
             font-size 0.25s ease-in-out;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
     }
 
-    .calendar .weekday-wrapper:hover .weekday {
-        width: 85%;
-        font-size: 1.1vw;
-    }
-
-    .calendar .weekday::before {
+    .calendar .container .weekday::before {
         content: "";
         position: absolute;
         inset: 2px;
@@ -140,7 +144,7 @@
         z-index: -1;
     }
 
-    .calendar .weekday-wrapper .weekday h1 {
+    .calendar .container .weekday h1 {
         font-size: 1.2em;
         padding-top: 0.5vw;
         padding-bottom: 0.5vw;
@@ -148,57 +152,56 @@
         width: 100%;
     }
 
-    .calendar .weekday-wrapper .weekday .day {
-        flex: 1 0;
-        gap: 1vw;
+    .calendar .container .weekday .day {
         margin: 1px 5px;
         text-align: center;
         position: relative;
         background-color: #333;
         border: 2px solid #555;
+        aspect-ratio: 1;
     }
 
-    .calendar .weekday-wrapper .weekday .dark {
+    .calendar .container .weekday .dark {
         background-color: #333;
         border: 2px solid #444;
     }
 
-    .calendar .weekday-wrapper .weekday .day:hover {
+    .calendar .container .weekday .day:hover {
         border: 2px solid #006931;
     }
 
-    .calendar .weekday-wrapper .weekday .active {
+    .calendar .container .weekday .active {
         border: 3px solid #009746
     }
 
-    .calendar .weekday-wrapper .weekday .active:hover {
+    .calendar .container .weekday .active:hover {
         border: 2.5px solid #009746
     }
 
-    .calendar .weekday-wrapper .weekday .day .number {
+    .calendar .container .weekday .day .number {
         width: 30%;
         margin-left: auto;
         border-bottom: 1px solid #555;
         margin-bottom: 5px;
     }
 
-    .calendar .weekday-wrapper .weekday .day .number {
+    .calendar .container .weekday .day .number {
         width: 30%;
         margin-left: auto;
         border-bottom: 1px solid #555;
         margin-bottom: 5px;
     }
 
-    .calendar .weekday-wrapper .weekday .dark .number {
+    .calendar .container .weekday .dark .number {
         border-bottom: 1px solid #444;
         color: #aaa;
     }
 
-    .calendar .weekday-wrapper .weekday .day .events {
+    .calendar .container .weekday .day .events {
         width: 100%;
     }
 
-    .calendar .weekday-wrapper .weekday .day .events .event {
+    .calendar .container .weekday .day .events .event {
         padding: 0;
         margin: 0;
         font-size: 0.75em;
