@@ -21,6 +21,10 @@ export class JSONDataSource extends DataSource {
             fs.writeFileSync("./data.jsonl", "")
         }
 
+        if (!fs.existsSync("./log.txt")) {
+            fs.writeFileSync("./log.txt", "")
+        }
+
         setInterval(() => {
             if (this.isSaving || this.changes.size == 0) return;
             this.save()

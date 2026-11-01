@@ -2,13 +2,14 @@ import { Scope } from "src/container/Scope";
 import { Singleton } from "src/container/Singleton";
 import { DataSource } from "../types/storage/DataSource";
 import { CompleteableFuture } from "src/utility/CompletableFuture";
+import { UserCredentials } from "../types/storage/UserCredentials";
 
 @Singleton
 export class StorageHandler {
     private dataHandler: CompleteableFuture<DataSource> = new CompleteableFuture<DataSource>();
 
     constructor(
-        private scope: Scope
+        scope: Scope
     ) {
         scope.getAsync<DataSource>(DataSource).then((handlers) => {
             handlers.forEach((handler) => {
@@ -29,8 +30,16 @@ export class StorageHandler {
         return await this.dataHandler.getValue()
     }
 
-    public async getUser(id: string) {
-        return (await this.getDataHandler()).getUser(id)
+    public getUser(id: string) {
+        const future = new CompleteableFuture<UserCredentials | undefined>()
+        
+        this.getDataHandler().then(source => {
+            source.getUser(id).onComplete(value => {
+                future.complete(value)
+            })
+        })
+
+        return future;
     }
 
     public async removeUser(id: string) {

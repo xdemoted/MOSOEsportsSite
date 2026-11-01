@@ -15,7 +15,11 @@ const defaults = {
 const requires = [
     "CLIENT_ID",
     "CLIENT_SECRET",
-    "NECC_URI"
+    "NECC_URI",
+    "BOT_TOKEN",
+    "SERVER_ID",
+    "JWT_SECRET",
+    "JWT_ACCESS_SECRET",
 ]
 
 let missing = ""
