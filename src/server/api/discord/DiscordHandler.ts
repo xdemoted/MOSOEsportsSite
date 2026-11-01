@@ -2,10 +2,13 @@ import { Singleton } from "src/container/Singleton";
 import { TokenResponse } from "src/server/types/discord/TokenResponse";
 import axios from "axios"
 import { UserResponse } from "src/server/types/discord/UserResponse";
+import { StorageHandler } from "src/server/handler/StorageHandler";
 
 @Singleton
 export class DiscordHandler {
     private OAUTH_REDIRECT_URI = process.env.BASE_URL + "/api/auth/callback";
+
+    constructor (private storageHandler: StorageHandler) {}
 
     public async getUser(accessToken: string): Promise<UserResponse> {
         const res = await fetch('https://discord.com/api/v10/users/@me', {
@@ -43,6 +46,29 @@ export class DiscordHandler {
         });
 
         return this.makeDiscordAuthRequest(data, "https://discord.com/api/oauth2/token/revoke")
+    }
+
+    public async addUserToServer(userID: string) {
+        const user = await this.storageHandler.getUser(userID).getValue()
+        const url = `https://discordapp.com/api/v8/guilds/${process.env.SERVER_ID}/members/${userID}`
+
+        if (user) {
+            if (new Date().getTime() > user.getExpireTime()) {
+                user.updateToken(await this.getToken(user.getRefreshToken()))
+            }
+
+            const response = (await axios.post(url,
+                new URLSearchParams({
+                    token: user.getAccessToken()
+                }),
+                {
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        'Authorization': `Bot ${process.env.BOT_TOKEN}`
+                    }
+                }
+            ))
+        }
     }
 
     public async makeDiscordAuthRequest(data: URLSearchParams, url?: string) {
