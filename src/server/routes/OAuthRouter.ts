@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { Singleton } from "src/container/Singleton";
 import axios from 'axios';
-import { DiscordHandler } from "../api/discord/DiscordHandler";
+import { DiscordHandler } from "../handler/DiscordHandler";
 import { TokenResponse } from "src/server/types/discord/TokenResponse";
 import { ExpressHandler } from "src/server/handler/ExpressHandler";
 import { StorageHandler } from "../handler/StorageHandler";

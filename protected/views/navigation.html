@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+
+<html>
+
+<header>
+    <meta charset="UTF-8" name="viewport" content="width=device-width, initial-scale=1">
+    <title>Dashboard</title>
+</header>
+
+<body>
+    <div class="header">
+        <div>
+            <h1>MOSO Espots</h1>
+        </div>
+    </div>
+    <div class="content">
+        <div>
+            <nav class="open">
+                <div class="current">
+                    Page Name
+                </div>
+                <a href="/dashboard/">
+                    Overview
+                </a>
+                <a href="/dashboard/teams">
+                    Teams
+                </a>
+                <a href="/dashboard/members">
+                    Members
+                </a>
+                <a href="/dashboard/applications">
+                    Applications
+                </a>
+                <a href="/dashboard/overlays">
+                    Overlays
+                </a>
+            </nav>
+            <div class="module">
+
+            </div>
+        </div>
+    </div>
+
+    <style>
+        body {
+            margin: 0;
+            background-color: #333;
+            overflow-y: hidden;
+        }
+
+        .header {
+            height: 56px;
+            width: 100%;
+            background-color: #006931;
+            display: flex;
+            justify-content: center;
+            margin: 0;
+            padding: 0;
+            font-family: 'arial';
+        }
+
+        .header>div {
+            max-width: 1200px;
+            width: 100%;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            align-items: center;
+        }
+
+        .header h1 {
+            display: flex;
+            align-items: center;
+            margin-left: 10px;
+            color: white
+        }
+
+        .content {
+            width: 100%;
+            min-height: calc(100% - 56px);
+            display: flex;
+            justify-content: center;
+        }
+
+        .content>div {
+            max-width: 1200px;
+            width: 100%;
+            display: flex;
+        }
+
+        .module {
+            font-family: 'arial';
+        }
+
+        nav {
+            padding: 24px 16px;
+            font-family: 'arial';
+            width: 256px;
+            font-size: 14px;
+            line-height: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 5px
+        }
+
+        nav div,
+        a {
+            color: white;
+            padding: 8px 12px;
+            border-radius: 5px;
+            width: auto;
+            min-height: 20px;
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        nav a:hover {
+            background-color: #aaaaaa55;
+        }
+
+        nav .active {
+            background-color: #aaaaaa55;
+        }
+
+        nav .current {
+            background-color: #77777755;
+            display: none;
+        }
+
+        .module {
+            width: calc(100% - 256px);
+            min-height: 100px;
+            padding: 24px 0;
+        }
+
+        @media only screen and (max-width: 1000px) {
+            .content>div {
+                flex-direction: column;
+            }
+
+            nav {
+                padding-bottom: 0px;
+                width: auto;
+                overflow-y: hidden;
+                max-height: 50px;
+                transition: max-height 0.35s ease-in-out
+            }
+
+            nav.open {
+                max-height: 1000px;
+            }
+
+            nav .current {
+                display: block;
+                animation: none;
+            }
+
+            nav a {
+                display: none;
+                animation: close 0.35s
+            }
+
+            nav.open a {
+                display: block;
+                animation-name: open;
+                animation-duration: 0.35s;
+            }
+
+            nav.open .current {
+                display: block;
+                animation: none;
+            }
+
+            @keyframes close {
+                0% {
+                    display: block;
+                }
+
+                100% {
+                    display: block;
+                }
+            }
+
+            .module {
+                width: 100%;
+            }
+        }
+    </style>
+    <script>
+        const nav = document.querySelector("nav")
+        const expand = document.querySelector("nav .current")
+        const pages = document.querySelectorAll("nav > a")
+        let dataURL = "{{dataurl}}"
+
+        function getPage() {
+            return window.location.href.slice(8).split("/")[2]
+        }
+
+        function getName() {
+            return getPage().slice(0,1).toUpperCase() + getPage().slice(1)
+        }
+
+        async function loadPage() {
+            if (dataURL == "{{dataurl}}") return console.log("no data url provided");
+
+            try {
+                const response = await fetch(dataURL);
+
+                if (!response.ok) {
+                    throw new Error(`Failed to load navigation`);
+                }
+
+                const content = document.body.innerHTML
+
+                const html = await response.text();
+
+                const module = document.querySelector(".module")
+
+                if (module) {
+                    module.innerHTML = html
+                }
+            } catch (error) {
+                console.error('Error loading content:', error);
+            }
+        }
+
+        function setActive() {
+            const name = getName()
+            pages.forEach(page => {
+                page.className = page.innerHTML.includes(name) ? "active" : ""
+            })
+        }
+
+        if (expand && nav) {
+            expand.innerHTML = getName()
+            expand.addEventListener("click", () => {
+                if (nav.className) nav.className = ""
+                else nav.className = "open"
+            })
+        }
+
+        setActive()
+
+        loadPage(dataURL)
+    </script>
+</body>
+
+</html>

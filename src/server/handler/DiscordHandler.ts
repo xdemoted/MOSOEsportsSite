@@ -3,12 +3,51 @@ import { TokenResponse } from "src/server/types/discord/TokenResponse";
 import axios from "axios"
 import { UserResponse } from "src/server/types/discord/UserResponse";
 import { StorageHandler } from "src/server/handler/StorageHandler";
+import { Client, Events, GatewayIntentBits, Guild, GuildMember, PartialGuildMember, Role } from 'discord.js';
+import { CompleteableFuture } from "src/utility/CompletableFuture";
 
 @Singleton
 export class DiscordHandler {
     private OAUTH_REDIRECT_URI = process.env.BASE_URL + "/api/auth/callback";
 
-    constructor (private storageHandler: StorageHandler) {}
+    private guildMemberAdd: ((member: GuildMember) => void)[] = []
+    private guildMemberRemove: ((member: GuildMember | PartialGuildMember) => void)[] = []
+    private guildMemberUpdate: ((oldMember: GuildMember | PartialGuildMember, newMember: GuildMember) => void)[] = []
+    private guildRoleUpdate: ((oldRole: Role, newRole: Role) => void)[] = []
+
+    private guild: CompleteableFuture<Guild> = new CompleteableFuture<Guild>();
+
+    constructor(private storageHandler: StorageHandler) {
+        const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMembers] });
+
+        client.once(Events.ClientReady, c => {
+            console.log(`Discord bot logged in as ${c.user.tag}`);
+
+            client.guilds.fetch(process.env.SERVER_ID as string).then(guild => {
+                this.guild.complete(guild)
+            }).catch(err => {
+                throw new Error(`Failed to fetch guild: ${err instanceof Error ? err.message : String(err)}`);
+            });
+        });
+
+        client.on(Events.GuildMemberAdd, member => {
+            this.guildMemberAdd.forEach(listener => listener(member));
+        });
+
+        client.on(Events.GuildMemberRemove, member => {
+            this.guildMemberRemove.forEach(listener => listener(member));
+        });
+
+        client.on(Events.GuildMemberUpdate, (oldMember, newMember) => {
+            this.guildMemberUpdate.forEach(listener => listener(oldMember, newMember));
+        });
+
+        client.on(Events.GuildRoleUpdate, (oldRole, newRole) => {
+            this.guildRoleUpdate.forEach(listener => listener(oldRole, newRole));
+        });
+
+        client.login(process.env.BOT_TOKEN);
+    }
 
     public async getUser(accessToken: string): Promise<UserResponse> {
         const res = await fetch('https://discord.com/api/v10/users/@me', {
@@ -88,5 +127,26 @@ export class DiscordHandler {
         )).data
 
         return response;
+    }
+
+    public async getGuildMember(userId: string) {
+        const guild = await this.guild.getValue();
+        return guild.members.fetch(userId);
+    }
+
+    public onGuildMemberAdd(listener: (member: GuildMember) => void) {
+        this.guildMemberAdd.push(listener);
+    }
+
+    public onGuildMemberRemove(listener: (member: GuildMember | PartialGuildMember) => void) {
+        this.guildMemberRemove.push(listener);
+    }
+
+    public onGuildMemberUpdate(listener: (oldMember: GuildMember | PartialGuildMember, newMember: GuildMember) => void) {
+        this.guildMemberUpdate.push(listener);
+    }
+
+    public onGuildRoleUpdate(listener: (oldRole: Role, newRole: Role) => void) {
+        this.guildRoleUpdate.push(listener);
     }
 }

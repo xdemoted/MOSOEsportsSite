@@ -1,0 +1,76 @@
+<div id="overview">
+    <h1>Executive Overview</h1>
+    <p>View status of services and infrastructure</p>
+    <div>
+        <div>
+            <h2>Teams</h2>
+            <p>Create, add or remove members, and edit teams</p>
+        </div>
+        <div>
+            <h2>Members</h2>
+            <p>Add, remove, and manage existing members</p>
+        </div>
+        <div>
+            <h2>Applications</h2>
+            <p>Approve or Deny membership applications</p>
+        </div>
+        <div>
+            <h2>Overlays</h2>
+            <p>Create, edit, and remove streaming overlays</p>
+        </div>
+    </div>
+</div>
+<style>
+    body {
+        background-color: #333;
+    }
+
+    #overview {
+        padding: 0 16px;
+        color: white;
+        font-size: 16px;
+        font-family: 'Arial';
+    }
+
+    #overview p {
+        font-size: 0.875em;
+        color: #bbb;
+        padding-bottom: 15px;
+    }
+
+    #overview h1 {
+        font-size: 1.5em;
+    }
+
+    #overview h2 {
+        font-size: 1em;
+    }
+
+    #overview h1,
+    h2,
+    p {
+        padding: 0;
+        margin: 0;
+    }
+
+    #overview>div {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(100px, 1fr));
+        gap: 5px
+    }
+
+    #overview>div>div {
+        padding: 16px 24px;
+        min-height: 50px;
+        background-color: #404040;
+        border: 2px solid #555;
+        border-radius: 10px;
+    }
+
+    @media only screen and (max-width: 1000px) {
+        #overview>div {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+        }
+    }
+</style>
