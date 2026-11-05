@@ -1,68 +1,316 @@
 <div class="calendar">
-    <div class="sidebar"></div>
+    <div class="sidebar">
+        <div class="event">
+            <div class="color" style="background-color: rgb(0, 164, 164);"></div>
+            <div class="container">
+                <img src="/images/icons/games/overwatch.svg">
+                <div class="name">
+                    MSSU GREEN vs MVNU Cougars
+                    <p>5:29 PM - 10:29 PM</p>
+                </div>
+            </div>
+        </div>
+    </div>
     <div class="container">
         <div class="sunday weekday">
             <h1>Sunday</h1>
-            <div class="day"></div>
-            <div class="day"></div>
-            <div class="day"></div>
-            <div class="day"></div>
-            <div class="day"></div>
         </div>
         <div class="monday weekday">
             <h1>Monday</h1>
-            <div class="day"></div>
-            <div class="day"></div>
-            <div class="day"></div>
-            <div class="day"></div>
-            <div class="day"></div>
         </div>
         <div class="tuesday weekday">
             <h1>Tuesday</h1>
-            <div class="day"></div>
-            <div class="day"></div>
-            <div class="day"></div>
-            <div class="day"></div>
-            <div class="day"></div>
         </div>
         <div class="wednesday weekday">
             <h1>Wednesday</h1>
-            <div class="day"></div>
-            <div class="day"></div>
-            <div class="day"></div>
-            <div class="day"></div>
-            <div class="day"></div>
         </div>
         <div class="thursday weekday">
             <h1>Thursday</h1>
-            <div class="day"></div>
-            <div class="day"></div>
-            <div class="day"></div>
-            <div class="day"></div>
-            <div class="day"></div>
         </div>
         <div class="friday weekday">
             <h1>Friday</h1>
-            <div class="day"></div>
-            <div class="day"></div>
-            <div class="day"></div>
-            <div class="day"></div>
-            <div class="day"></div>
         </div>
         <div class="saturday weekday">
             <h1>Saturday</h1>
-            <div class="day"></div>
-            <div class="day"></div>
-            <div class="day"></div>
-            <div class="day"></div>
-            <div class="day"></div>
         </div>
     </div>
-    <!--
-    <div id="loadpage">
+    <div class="loadpage">
         <img class="loadcircle" src="images/icons/misc/loading.svg">
     </div>
-    -->
+    <script>
+        const scriptTag = document.scripts[document.scripts.length - 1];
+        const element = scriptTag.parentElement;
+
+        const loadpage = element.querySelector(".loadpage")
+
+        class Calendar {
+            dateMap = new Map();
+            events = [];
+            currentDate = new Date()
+
+            constructor() {
+                if (loadpage) {
+                    const spin = loadpage.children[0];
+                    let deg = 0
+
+                    const interval = setInterval(() => {
+                        spin.style.transform = `rotate(${deg}deg)`
+                        deg += 7
+                        deg = (deg > 360) ? deg - 360 : deg
+                    }, 25)
+
+                    element.querySelectorAll(".weekday").forEach(weekday => {
+                        for (let i = 0; i < 6; i++) {
+                            const day = document.createElement("div")
+                            day.className = "day"
+                            day.addEventListener("click", () => {
+                                this.selectDay(day.getAttribute("data-time"))
+                            })
+                            weekday.appendChild(day)
+                        }
+                    })
+
+                    this.updateMonth()
+
+                    this.updateEvents().catch(error => {
+                        setSubHeaderText("Unable to load calendar events: " + error, "center")
+                    }).finally(() => {
+                        //this.selectDay(getLocalStamp(new Date()))
+                        clearInterval(interval)
+                        loadpage.remove()
+                    })
+                }
+            }
+
+            last() {
+                this.currentDate = new Date(
+                    this.currentDate.getFullYear(),
+                    this.currentDate.getMonth() - 1,
+                    1
+                )
+                this.updateMonth()
+            }
+
+            next() {
+                this.currentDate = new Date(
+                    this.currentDate.getFullYear(),
+                    this.currentDate.getMonth() + 1,
+                    1
+                )
+                this.updateMonth()
+            }
+
+            updateMonth() {
+                const days = element.querySelectorAll(".day")
+                const firstOfMonth = new Date(
+                    this.currentDate.getFullYear(),
+                    this.currentDate.getMonth(),
+                    1
+                )
+                const firstVisibleDate = new Date(firstOfMonth)
+                firstVisibleDate.setDate(firstVisibleDate.getDate() - firstOfMonth.getDay())
+                const todayStamp = getLocalStamp(new Date())
+
+                this.dateMap.clear()
+
+                for (let weekday = 0; weekday < 7; weekday++) {
+                    for (let week = 0; week < 6; week++) {
+                        const index = weekday * 6 + week
+                        const cell = days[index]
+                        if (!cell) continue;
+                        const date = new Date(firstVisibleDate)
+                        date.setDate(firstVisibleDate.getDate() + week * 7 + weekday)
+
+                        cell.className = "day"
+                        cell.setAttribute("data-time", getLocalStamp(date))
+                        cell.innerHTML = ""
+
+                        const numberContainer = document.createElement("div")
+                        numberContainer.className = "number"
+                        numberContainer.innerText = date.getDate()
+                        cell.appendChild(numberContainer)
+
+                        const eventContainer = document.createElement("div")
+                        eventContainer.className = "events"
+                        cell.appendChild(eventContainer)
+
+                        if (date.getMonth() !== this.currentDate.getMonth()) {
+                            cell.classList.add("dark")
+                        }
+                        if (getLocalStamp(date) === todayStamp) {
+                            cell.classList.add("active")
+                        }
+
+                        this.dateMap.set(getLocalStamp(date), {
+                            events: eventContainer,
+                            day: numberContainer
+                        })
+                    }
+                }
+
+                setSubHeaderText(
+                    this.currentDate.toLocaleString(undefined, { month: "long", year: "numeric" }),
+                    "center"
+                )
+                this.renderEvents()
+            }
+
+            async updateEvents() {
+                const response = await fetch('/api/calendar')
+
+                if (!response.ok) {
+                    throw new Error("No calendar data found")
+                }
+
+                const data = await response.text()
+                this.events = data.split("\n").filter(value => value.trim()).map(value => {
+                    const values = value.split(";")
+                    return {
+                        name: values[0],
+                        start: values[1],
+                        end: values[2],
+                        uri: values[3]
+                    }
+                })
+                this.renderEvents()
+            }
+
+            addEvent(name, start, end, uri) {
+                this.events.push({ name: name, start: start, end: end, uri: uri })
+                this.renderEvents()
+            }
+
+            renderEvents() {
+                this.events.forEach(event => {
+                    const date = new Date(event.start * 1000)
+                    const day = this.dateMap.get(getLocalStamp(date))
+                    if (day) {
+                        const p = document.createElement("p")
+                        p.className = "event"
+                        p.innerText = ""
+                        const nameParts = event.name.split(": ")
+
+                        let color = "#006931"
+                        switch (nameParts[0]) {
+                            case "Overwatch": {
+                                color = "#c57a17"
+                            } break;
+                            case "Marvel Rivals": {
+                                color = "#c78f00"
+                            } break;
+                            case "Super Smash Bros": {
+                                color = "#b70903"
+                            } break;
+                            case "Rocket League": {
+                                if (event.name.includes("MSSU Gold")) {
+                                    color = "#0065a4"
+                                } else {
+                                    color = "#00a4a4"
+                                }
+                            }
+                        }
+
+                        //p.innerText = nameParts[nameParts.length - 1]
+                        p.style = `background-color: ${color}`
+
+                        day.events.appendChild(p)
+                    }
+                })
+            }
+
+            selectDay(time) {
+                const sidebar = element.querySelector(".sidebar");
+                if (sidebar && sidebar.getAttribute("data-time") != time) {
+                    sidebar.innerHTML = `<h1>${time}</h1>`
+                    sidebar.setAttribute("data-time", time)
+                    this.events.filter(event => getLocalStamp(new Date(event.start * 1000)) == time).forEach(event => {
+                        const nameParts = event.name.split(": ")
+
+                        const eventDiv = document.createElement("div")
+                        eventDiv.className = "event"
+
+                        const colorDiv = document.createElement("div")
+                        colorDiv.className = "color";
+
+                        let color = "#006931"
+                        let src;
+                        switch (nameParts[0]) {
+                            case "Overwatch": {
+                                color = "#c57a17"
+                                src = "images/icons/games/overwatch.svg"
+                            } break;
+                            case "Marvel Rivals": {
+                                color = "#c78f00"
+                                src = "images/icons/games/rivals.svg"
+                            } break;
+                            case "Super Smash Bros": {
+                                color = "#b70903"
+                                src = "images/icons/games/smash.svg"
+                            } break;
+                            case "Rocket League": {
+                                if (event.name.includes("MSSU Gold")) {
+                                    color = "#0065a4"
+                                } else {
+                                    color = "#00a4a4"
+                                }
+                                src = "images/icons/games/rocket.svg"
+                            }
+                            case "Rainbow Six Siege": {
+                                src = "images/icons/games/rainbow.svg"
+                            }
+                        }
+                        colorDiv.style.backgroundColor = color
+                        eventDiv.appendChild(colorDiv)
+
+                        const containerDiv = document.createElement("div")
+                        containerDiv.className = "container"
+                        eventDiv.appendChild(containerDiv)
+
+                        if (src) {
+                            const img = document.createElement("img")
+                            img.src = src
+                            containerDiv.appendChild(img)
+                        }
+
+                        const nameDiv = document.createElement("div")
+                        nameDiv.className = "name"
+                        const start = new Date(event.start * 1000)
+                        const end = new Date(event.end * 1000)
+                        nameDiv.innerHTML = `${nameParts[nameParts.length - 1]}\n<p>${getHourStamp(start)} - ${getHourStamp(end)}</p>`
+                        containerDiv.appendChild(nameDiv)
+
+                        sidebar.appendChild(eventDiv)
+                    })
+                }
+            }
+        }
+
+        const calendar = new Calendar()
+
+        function getDaysInMonth(month = new Date().getMonth(), year = new Date().getFullYear()) {
+            return new Date(year, month + 1, 0).getDate()
+        }
+
+        function getLocalStamp(date) {
+            return date.getFullYear().toString() + "-" + (date.getMonth() + 1) + "-" + date.getDate()
+        }
+
+        function getHourStamp(date) {
+            let hour = date.getHours()
+            const minutes = date.getMinutes()
+            console.log(`${hour}:${minutes}`)
+            let postfix = "AM"
+
+            if (hour >= 12) { hour -= 12; postfix = "PM" }
+            if (hour == 0) hour = 12
+
+            return `${hour}:${minutes.toString().padStart(2, "0")} ${postfix}`
+        }
+
+        addSubHeaderButton("<", () => { calendar.last() }, "right")
+        addSubHeaderButton(">", () => { calendar.next() }, "right")
+
+    </script>
 </div>
 <style>
     @font-face {
@@ -72,37 +320,88 @@
 
     .calendar {
         display: flex;
-        font-family: "Avenir";
-        font-size: 1vw;
+        font-family: "Avenir", "Arial";
+        font-size: max(16px, 1vw);
         color: white;
         position: relative;
     }
 
     .calendar .sidebar {
         min-height: 100%;
-        min-width: 15%;
+        min-width: 23%;
         background-color: #222;
         border-right: 2px solid #333;
         margin: 0px 10px 0px 0px;
-        padding: 0;
+        font-size: max(16px, 1vw);
+        padding: 20px;
+    }
+
+    .calendar .sidebar .event {
+        width: fit-content;
+    }
+
+    .calendar .sidebar .event .color {
+        height: min(5px, 0.35vh);
+        width: 100%;
+        border-radius: 5px;
+        margin-bottom: 3px;
+        margin-top: 20px;
+    }
+
+    .calendar .sidebar .event .container {
+        display: flex;
+    }
+
+    .calendar .sidebar .event .container img {
+        width: 2em;
+        aspect-ratio: 1;
+        margin-right: 5px;
+    }
+
+    .calendar .sidebar .event .container .name {
+        line-height: calc(1 / 4em);
+        max-width: 30ch;
+        font-size: 1em;
+    }
+
+    .calendar .sidebar .event .container .name p {
+        font-size: 0.75em;
+        color: #aaa
+    }
+
+    .calendar .sidebar .event .time {
+        color: #aaa;
+        font-size: 0.75em;
+    }
+
+    .calendar .sidebar h1 {
+        width: 100%;
+        justify-content: center;
+        display: flex;
+        font-size: 1.2em;
     }
 
     @media screen and (max-aspect-ratio: 1) {
         .calendar {
             flex-direction: column-reverse;
-            height: 100%;
         }
 
         .calendar .sidebar {
             min-height: auto;
-            height: 100%;
-            margin: 10px 0px 0px 0px;
+            margin: 20px;
+            clip-path: polygon(0 30px, 8px 0, 100% 0, 100% calc(100% - 30px), calc(100% - 8px) 100%, 0 100%);
+        }
+
+        .calendar .sidebar {
+            font-size: 32px
         }
     }
 
     .calendar .container {
+        padding: 20px;
         display: flex;
-        min-width: calc(85% - 10px);
+        min-width: auto;
+        height: fit-content;
         flex: 1 0;
         gap: 0.5vw;
         justify-content: center;
@@ -155,10 +454,10 @@
     .calendar .container .weekday .day {
         margin: 1px 5px;
         text-align: center;
-        position: relative;
         background-color: #333;
         border: 2px solid #555;
         aspect-ratio: 1;
+        overflow-y: hidden;
     }
 
     .calendar .container .weekday .dark {
@@ -199,9 +498,14 @@
 
     .calendar .container .weekday .day .events {
         width: 100%;
+        display: flex;
+        flex-direction: column;
     }
 
     .calendar .container .weekday .day .events .event {
+        flex: 1 0;
+        width: auto;
+        min-height: 5px;
         padding: 0;
         margin: 0;
         font-size: 0.75em;

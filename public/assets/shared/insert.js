@@ -25,32 +25,21 @@ async function loadHTML(elementId, filePath) {
     const element = document.getElementById(elementId);
     if (element) {
       element.innerHTML = html;
+      element.querySelectorAll("script").forEach(script => {
+        const newScript = document.createElement("script");
+        Array.from(script.attributes).forEach(attr =>
+          newScript.setAttribute(attr.name, attr.value)
+        );
+
+        newScript.appendChild(
+          document.createTextNode(script.innerHTML)
+        )
+
+        script.parentNode.replaceChild(newScript, script);
+      })
       switch (elementId) {
         case "header": {
-          const currentPath = window.location.pathname.replace(/\/+$/, '') || '/';
-          element.querySelectorAll('#navbar a').forEach(link => {
-            const linkPath = new URL(link.href, window.location.href).pathname.replace(/\/+$/, '') || '/';
-            link.classList.toggle('active', linkPath === currentPath);
-          });
-
-          const loginButton = element.querySelector('.account');
-          loginButton?.addEventListener('click', async () => {
-            try {
-              const response = await fetch('/api/auth/redirect');
-              if (!response.ok) {
-                throw new Error(`Login request failed: ${response.status}`);
-              }
-
-              const redirectUrl = await response.text();
-              if (!redirectUrl) {
-                throw new Error('Login redirect URL was empty');
-              }
-
-              window.location.assign(redirectUrl);
-            } catch (error) {
-              console.error('Unable to start login:', error);
-            }
-          });
+          
         } break;
         case "calendar": {
           const loadpage = document.getElementById("loadpage")

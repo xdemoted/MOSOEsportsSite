@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html>
+
+<body>
+    <div class="overlay">
+        <div class="scores">
+            <div class="teamname">MSSU</div>
+            <div class="score">110</div>
+            <div class="diff">10</div>
+            <div class="score">314</div>
+            <div class="teamname">MSSU</div>
+        </div>
+        <div class="racesleft">12 Races Left</div>
+        <div class="races">
+            <div class="win">34</div>
+            <div class="loss">42</div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+    </div>
+</body>
+<style>
+    @font-face {
+        font-family: "Titan";
+        src: url("fonts/titan.ttf") format("ttf")
+    }
+
+    html,
+    body {
+        margin: 0;
+        padding: 0;
+        display: flex;
+        justify-content: center;
+        margin-top: 10px
+    }
+
+    .overlay {
+        width: 500px;
+        aspect-ratio: 16/4;
+        background-color: #333333ec;
+        font-family: 'Avenir', 'Arial';
+        font-size: 32px;
+        color: white;
+        border-radius: 10px;
+    }
+
+    .scores {
+        width: 100%;
+        height: 70%;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+    }
+
+    .scores>div {
+        flex: 1 0 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .diff {
+        background-color: #5555558c;
+        border-radius: 20px;
+        height: 50px;
+        max-width: 75px;
+        font-size: 0.75em;
+    }
+
+    .teamname {
+        font-size: 0.8em;
+        font-family: 'Titan', 'Arial Rounded MT Bold', sans-serif
+    }
+
+    .score {
+        font-size: 1.2em;
+    }
+
+    .racesleft {
+        display: flex;
+        justify-content: right;
+        font-size: 0.5em;
+        margin-right: 15px;
+    }
+
+    .races {
+        width: calc(100%-10px);
+        height: 30%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding-left: 15px;
+        padding-right: 15px;
+        gap: 5px
+    }
+
+    .races>div {
+        background-color: #6666666a;
+        height: 50%;
+        border-radius: 5px;
+        flex: 1 0 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 0.4em;
+        border-bottom: 3px solid #333;
+    }
+
+    .races .win {
+        background-color: #667066;
+        border-bottom: 3px solid rgb(0, 203, 0);
+    }
+
+    .races .loss {
+        background-color: #706666;
+        border-bottom: 3px solid rgb(234, 0, 47);
+    }
+</style>
+<script>
+    function updateOverlay(data) { // t1name;t1score;t2name;t2score;racediff;racediff;racediff;
+        const splitData = data.split(";")
+        const team1 = splitData[0]
+        const team2 = splitData[1]
+        let team1score = 0
+        let team2score = 0
+        const races = splitData.slice(2)
+
+        document.querySelectorAll(".teamname").forEach((elem, key) => {
+            elem.innerHTML = key == 0 ? team1 : team2
+        })
+
+        document.querySelectorAll(".races > div").forEach((element, key) => {
+            if (races[key]) {
+                const num = Number.parseInt(races[key])
+                team1score += num
+                team2score += 82 - num
+                if (Number.parseInt(element.innerHTML) != num) {
+                    const diff = (2 * num) - 82
+                    element.className = diff > 0 ? "win" : diff < 0 ? "loss" : ""
+                    element.innerHTML = Math.abs(diff)
+                }
+            }
+        })
+
+        const diff = document.querySelector(".diff")
+
+        if (diff) {
+            diff.innerHTML = Math.abs(Number.parseFloat(team1score) - Number.parseFloat(team2score))
+        }
+
+        const racesleft = document.querySelector(".racesleft")
+
+        if (racesleft) {
+            racesleft.innerHTML = 12 - races.length ? `${12 - races.length} Race${12 - races.length > 1 ? "s" : ""} Left` : ""
+        }
+
+        document.querySelectorAll(".score").forEach((elem, key) => {
+            elem.innerHTML = key == 0 ? team1score : team2score
+        })
+    }
+
+    updateOverlay("MSSU;UNCG;40;45;43;49;44;46;31;33;45;49;46;33")
+</script>
+
+</html>
