@@ -9,7 +9,7 @@ export class UserStorageHandler extends AbstractStorageHandler<User> {
         super(storageHandler)
     }
 
-    public override getTable(): string {
+    public override getTableName(): string {
         return "users"
     }
 
@@ -23,5 +23,9 @@ export class UserStorageHandler extends AbstractStorageHandler<User> {
 
     public async updateUser(user: User) {
         return this.updateValue(user)
+    }
+
+    public getUsers() {
+        return this.getTable()
     }
 }

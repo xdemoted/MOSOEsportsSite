@@ -4,6 +4,7 @@ import { Singleton } from "src/container/Singleton";
 import { CompleteableFuture } from "src/utility/CompletableFuture";
 import { DataSource } from "../types/DataSource";
 import { DataRecord } from "../types/DataRecord";
+import { Data } from "ws";
 
 @Singleton
 export default class MongoDataSource extends DataSource {
@@ -58,6 +59,18 @@ export default class MongoDataSource extends DataSource {
             } catch (error) {
                 console.log(error)
                 return resolve(false)
+            }
+        })
+    }
+
+    public override getTable(tableName: string): Promise<DataRecord[]> {
+        return new Promise(async (resolve, reject) => {
+            const collection = (await this.database.getValue()).collection(tableName)
+
+            try {
+                resolve(await collection.find().toArray() as unknown as DataRecord[])
+            } catch (error) {
+                return resolve([])
             }
         })
     }

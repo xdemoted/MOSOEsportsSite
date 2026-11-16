@@ -31,9 +31,7 @@ export class DiscordHandler {
                 const users = await guild.members.fetch()
 
                 users.forEach(async user => {
-                    console.log(user.user.displayName)
                     const existingUser = await userStorage.getUser(user.id)
-                    console.log(user.roles.cache.has("1408207270981926974"))
                     if (existingUser) {
                         let expiry = existingUser.getExpireTime()
 

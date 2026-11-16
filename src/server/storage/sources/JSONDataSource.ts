@@ -16,7 +16,7 @@ export class JSONDataSource extends DataSource {
 
     public async updateCache() {
         try {
-            const file = await fs.readFile.__promisify__('./data.json',{encoding: 'utf-8'})
+            const file = await fs.readFile.__promisify__('./data.json', { encoding: 'utf-8' })
             this.cache = JSON.parse(file)
         } catch (error) {
             console.log(error)
@@ -47,7 +47,7 @@ export class JSONDataSource extends DataSource {
 
             if (!table) return resolve(null)
 
-            const result = table.find(record => {record.recordID == id})
+            const result = table.find(record => { record.recordID == id })
 
             resolve(result ? result : null)
         })
@@ -59,7 +59,7 @@ export class JSONDataSource extends DataSource {
 
             if (!table) return resolve(false)
 
-            const result = table.findIndex(record => {record.recordID == id})
+            const result = table.findIndex(record => { record.recordID == id })
 
             if (result == -1) return resolve(false)
 
@@ -78,7 +78,7 @@ export class JSONDataSource extends DataSource {
                 return resolve(true)
             }
 
-            const result = table.findIndex(tableRecord => {tableRecord.recordID == record.recordID})
+            const result = table.findIndex(tableRecord => { tableRecord.recordID == record.recordID })
 
             if (result == -1) {
                 table.push(record)
@@ -86,6 +86,18 @@ export class JSONDataSource extends DataSource {
             } else {
                 table[result] = record
             }
+        })
+    }
+
+    public override getTable(tableName: string): Promise<DataRecord[]> {
+        return new Promise((resolve, reject) => {
+            let table = this.cache[tableName]
+
+            if (!table) {
+                return resolve([]);
+            }
+
+            resolve(table)
         })
     }
 }

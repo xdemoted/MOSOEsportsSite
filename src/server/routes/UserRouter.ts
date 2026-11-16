@@ -38,9 +38,9 @@ export class UserRouter {
 
                 if (user) {
                     res.json({
-                        id: user.getDiscordID(),
-                        username: user.getUsername(),
-                        displayname: user.getDisplayName(),
+                        id: user.recordID,
+                        username: user.username,
+                        displayname: user.displayname,
                         permissions: await permissionHandler.getUserPermissions(userId)
                     })
                 } else {
@@ -80,6 +80,27 @@ export class UserRouter {
             } else {
                 res.status(401).json({ error: "Unauthorized" })
                 return
+            }
+        })
+
+        app.get("/api/users", expressHandler.requireAuth(Permission.VIEW_USERS), async (req, res) => {
+            try {
+                const users = await userStorageHandler.getUsers()
+
+
+                if (users) {
+                    res.send(users.map(async user => {
+                        return {
+                            id: user.recordID,
+                            username: user.username,
+                            displayname: user.displayname
+                        }
+                    }))
+                } else {
+                    res.status(500)
+                }
+            } catch (error) {
+
             }
         })
     }

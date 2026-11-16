@@ -228,6 +228,12 @@
             headers: {
                 "Content-Type": "application/json"
             }
+        }).then(async (response) => {
+            if (response.ok) {
+                window.location.assign(
+                    '/api/overlays/'+ (await response.text())
+                )
+            }
         })
     }
 

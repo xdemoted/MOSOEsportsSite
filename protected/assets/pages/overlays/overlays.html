@@ -15,14 +15,27 @@
         table.addButton("/images/icons/misc/pen.svg")
         table.addButton("/images/icons/misc/trash.svg","#00000000","#aa3333")
 
-        table.addRow(["test","test","test","/api/overlays/23123798","/dashboard/overlays/23123798"])
-        table.addRow([])
-        table.addRow([])
-        table.addRow([])
-        table.addRow([])
-        table.addRow([])
+        fetchData(table)
 
         table.updateView()
+    }
+
+    async function fetchData(table) {
+        const response = await fetch("/api/overlays")
+
+        if (!response.ok) return // TODO - Error Handling
+
+        const data = await response.json()
+
+        data.forEach(overlay => {
+            table.addRow([
+                overlay.overlaytype,
+                overlay.createdBy,
+                overlay.createdAt,
+                `/api/overlays/${overlay.recordID}`,
+                `/dashboard/overlays/${overlay.recordID}`
+            ])
+        });
     }
 </script>
 <style>

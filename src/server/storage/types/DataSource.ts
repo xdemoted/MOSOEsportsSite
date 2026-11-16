@@ -8,6 +8,8 @@ export abstract class DataSource {
     public abstract getValue(tableName: string, id: string): Promise<DataRecord | null>;
     public abstract removeValue(tableName: string, id: string): Promise<boolean>;
     public abstract updateValue(tableName: string, record: DataRecord): Promise<boolean>;
+
+    public abstract getTable(tableName: string): Promise<DataRecord[]>
     
     public abstract getSourceName(): string;
 }

@@ -9,8 +9,8 @@ export class User implements DataRecord {
 
     constructor(
         public recordID: string,
-        private username: string,
-        private displayname: string,
+        public username: string,
+        public displayname: string,
         private access_token?: string,
         private refresh_token?: string,
         expires_in?: number

@@ -1,0 +1,33 @@
+<div></div>
+<script type="module">
+    import {Table} from "/protected/modules/table/table.js"
+
+    const module = document.querySelector(".module")
+
+    if (module) {
+        const table = new Table(module.querySelector("div:last-of-type"),"#373737")
+
+        table.addColumn("Member Name",1.5)
+        table.addButton("/images/icons/misc/link.svg")
+        table.addButton("/images/icons/misc/pen.svg")
+        table.addButton("/images/icons/misc/trash.svg","#00000000","#aa3333")
+
+        fetchData(table)
+
+        table.updateView()
+    }
+
+    async function fetchData(table) {
+        const response = await fetch("/api/users")
+
+        if (!response.ok) return // TODO - Error Handling
+
+        const data = await response.json()
+
+        data.forEach(member => {
+            table.addRow([
+                member.displayname
+            ])
+        });
+    }
+</script>

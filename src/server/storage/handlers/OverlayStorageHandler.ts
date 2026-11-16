@@ -10,7 +10,7 @@ export class OverlayStorageHandler extends AbstractStorageHandler<Overlay> {
         super(storageHandler)
     }
 
-    public override getTable(): string {
+    public override getTableName(): string {
         return "overlays"
     }
 
@@ -24,5 +24,9 @@ export class OverlayStorageHandler extends AbstractStorageHandler<Overlay> {
 
     public updateOverlay(overlay: Overlay) {
         return this.updateValue(overlay)
+    }
+
+    public getOverlays() {
+        return this.getTable()
     }
 }
