@@ -5,10 +5,12 @@ export type PostOverlay = {
 }
 
 export class Overlay implements DataRecord {
+    public rounds: number[][] = []
+
     constructor(
         public recordID: string,
         public createdBy: string,
-        public createdAt: string,
+        public createdAt: number,
 
         public overlaytype: string,
         public t1: string,

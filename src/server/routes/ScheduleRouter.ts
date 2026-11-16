@@ -3,7 +3,7 @@ import { ExpressHandler } from "../handler/ExpressHandler";
 import { CalendarHandler } from "../handler/CalendarHandler";
 
 @Singleton
-export class CalendarRouter {
+export class ScheduleRouter {
     constructor(
         expressHandler: ExpressHandler,
         calendarHandler: CalendarHandler

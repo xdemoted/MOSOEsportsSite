@@ -3,11 +3,14 @@ import { ExpressHandler } from "../../handler/ExpressHandler";
 import { Permission } from "../../types/Permission";
 import fs from "fs"
 import { Overlay } from "src/server/storage/types/Overlay";
+import { AppAuthHandler } from "src/server/handler/AppAuthHandler";
+import { randomInt, randomUUID } from "crypto";
 
 @Singleton
 export class OverlayRouter {
     constructor(
-        expressHandler: ExpressHandler
+        expressHandler: ExpressHandler,
+        appAuthHandler: AppAuthHandler
     ) {
         const app = expressHandler.getApp()
 
@@ -42,7 +45,14 @@ export class OverlayRouter {
                     typeof data.spm == 'string' &&
                     typeof data.stw == 'string'
                 ) {
-                    
+                    data.rounds = []
+                    data.createdAt = Date.now()
+                    const userID = appAuthHandler.checkAuth(req, res)
+
+                    if (!userID) return;
+
+                    data.createdBy = userID
+                    data.recordID = randomUUID()
                 } else {
                     res.status(400)
                     res.send(new Error('Missing required properties'))

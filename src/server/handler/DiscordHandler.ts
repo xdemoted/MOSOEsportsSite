@@ -35,7 +35,6 @@ export class DiscordHandler {
                     const existingUser = await userStorage.getUser(user.id)
                     console.log(user.roles.cache.has("1408207270981926974"))
                     if (existingUser) {
-                        console.log("knownUser")
                         let expiry = existingUser.getExpireTime()
 
                         if (expiry) {
@@ -53,7 +52,6 @@ export class DiscordHandler {
 
                         userStorage.updateUser(mergedUser)
                     } else if (user.roles.cache.has("1408207270981926974")) {
-                        console.log("newUser")
                         const mergedUser = new User(
                             user.id,
                             user.user.username,

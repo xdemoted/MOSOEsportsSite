@@ -222,7 +222,7 @@
         if (!valid) return;
 
         console.log(JSON.stringify(data))
-        fetch("/api/overlays", {
+        fetch("/api/overlays/new", {
             method: "POST",
             body: JSON.stringify(data),
             headers: {
