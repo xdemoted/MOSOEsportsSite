@@ -12,6 +12,8 @@ export class ExpressHandler {
         private appAuthHandler: AppAuthHandler,
         private permissionsHandler: PermissionsHandler,
     ) {
+        this.app.use(express.json())
+
         this.app.listen(process.env.APP_PORT, () => {
             console.log(`Server is running on port ${process.env.APP_PORT}`);
         });
@@ -27,7 +29,7 @@ export class ExpressHandler {
 
     public requireAuth(permission?: Permission) {
         return async (req: Request, res: Response, next: NextFunction) => {
-            const userId = this.appAuthHandler.checkAuth(req)
+            const userId = this.appAuthHandler.checkAuth(req, res)
 
             if (!userId) {
                 res.status(401).json({ error: "Unauthorized" })

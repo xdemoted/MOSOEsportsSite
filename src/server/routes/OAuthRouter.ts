@@ -4,10 +4,11 @@ import axios from 'axios';
 import { DiscordHandler } from "../handler/DiscordHandler";
 import { TokenResponse } from "src/server/types/discord/TokenResponse";
 import { ExpressHandler } from "src/server/handler/ExpressHandler";
-import { StorageHandler } from "../handler/StorageHandler";
-import { UserCredentials } from "../types/storage/UserCredentials";
+import { StorageHandler } from "../storage/StorageHandler";
+import { User } from "../storage/types/User";
 import { AppAuthHandler } from "../handler/AppAuthHandler";
 import { Logger } from "../logger/Logger";
+import { UserStorageHandler } from "../storage/handlers/UserStorageHandler";
 
 const OAUTH_REDIRECT_URI = process.env.BASE_URL + "/api/auth/callback"
 
@@ -16,7 +17,7 @@ export class OAuthRouter {
     constructor(
         private discordHandler: DiscordHandler,
         private expressHandler: ExpressHandler,
-        private storageHandler: StorageHandler,
+        private userStorageHandler: UserStorageHandler,
         private appAuthHandler: AppAuthHandler
     ) {
         const app = this.expressHandler.getApp()
@@ -50,7 +51,7 @@ export class OAuthRouter {
 
                 const user = await this.discordHandler.getUser(response.access_token)
 
-                this.storageHandler.updateUser(UserCredentials.fromDiscordResponse(user, response.access_token, response.refresh_token, response.expires_in))
+                this.userStorageHandler.updateUser(User.fromDiscordResponse(user, response.access_token, response.refresh_token, response.expires_in))
 
                 const token = appAuthHandler.createRefreshToken(user.id)
 
@@ -58,7 +59,6 @@ export class OAuthRouter {
                 res.cookie("refreshToken", token, {
                     maxAge: 90 * 24 * 60 * 60 * 1000,
                     httpOnly: true,
-                    domain: "localhost",
                     path: "/",
                     sameSite: "strict",
                     secure: process.env.BASE_URL?.includes("https"),

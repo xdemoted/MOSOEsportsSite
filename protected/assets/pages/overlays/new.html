@@ -1,0 +1,443 @@
+<meta charset="UTF-8" name="viewport" content="width=device-width, initial-scale=1">
+<div class="new">
+    <div class="container">
+        <h1>
+            Overlay Setup
+        </h1>
+        <div>
+            <div>
+                <p>Overlay Type</p>
+                <div class="dropdown" id="overlaytype">
+                    <div>
+                        <p data-placeholder="Overlay Type">Overlay Type</p>
+                        <p>🞂</p>
+                    </div>
+                    <div>
+                        <p>Mario Kart World</p>
+                        <p>Mario Kart Deluxe</p>
+                        <p>Overwatch</p>
+                        <p>Marvel Rivals</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="container">
+            <h1>Team 1</h1>
+            <div>
+                <p>Name</p>
+                <input id="t1" value="MSSU" required>
+            </div>
+            <div>
+                <p>Color</p>
+                <div class="color" style="height: 49px; display: flex;">
+                    <div
+                        style="border-radius: 10px 0 0 10px; min-width: 30px; min-height: 30px; background-color: #006937;">
+                    </div>
+                    <input id="t1c" value="#006937" style="border-radius: 0 10px 10px 0;" required>
+                </div>
+            </div>
+            <div>
+                <p>Logo URL</p>
+                <div class="url"
+                    style="display: flex; background-color: #444; border-radius: 10px; overflow: hidden; min-height: 49px;">
+                    <img src="" style="height: 39px; border-radius: 100px; margin: 5px;">
+                    <input id="t1u" value="" style="border-radius: 0px;">
+                </div>
+            </div>
+        </div>
+
+        <div class="container">
+            <h1>Team 2</h1>
+            <div>
+                <p>Name</p>
+                <input id="t2" value="" required>
+            </div>
+            <div>
+                <p>Color</p>
+                <div class="color" style="height: 49px; display: flex;">
+                    <div
+                        style="border-radius: 10px 0 0 10px; min-width: 30px; min-height: 30px; background-color: #000;">
+                    </div>
+                    <input id="t2c" value="" style="border-radius: 0 10px 10px 0;" required>
+                </div>
+            </div>
+            <div>
+                <p>Logo URL</p>
+                <input id="t2u" value="">
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <h1>Game Setup</h1>
+        <div class="row">
+            <div>
+                <p>Rounds per Series</p>
+                <input id="rps" value="" required>
+            </div>
+            <div>
+                <p>Rounds to Win (Leave blank for default)</p>
+                <input id="rtw" value="">
+            </div>
+        </div>
+        <div class="row">
+            <div>
+                <p>Number of Series</p>
+                <input id="spm" value="" required>
+            </div>
+            <div>
+                <p>Series to Win (Leave blank for default)</p>
+                <input id="stw">
+            </div>
+        </div>
+    </div>
+
+    <div class="row" style="justify-content: right;">
+        <a href="/dashboard/overlays"
+            style="background-color: rgb(159, 0, 0); border: 2px solid rgb(176, 0, 0);">Cancel</a>
+        <button id="submit">Create Overlay</button>
+    </div>
+</div>
+
+<script>
+    const query = document.querySelectorAll(".new .dropdown")
+    query.forEach(dropdown => {
+        const valueDiv = dropdown.firstElementChild
+        const value = valueDiv.querySelector("p:first-child")
+        const options = dropdown.querySelectorAll(".dropdown > div:last-child > p")
+
+        options.forEach(option => {
+            option.addEventListener("click", () => {
+                value.innerHTML = option.innerHTML
+                updateValues(option.innerHTML)
+            })
+        })
+    })
+
+    document.addEventListener('click', (event) => {
+        query.forEach(dropdown => {
+            if (dropdown.contains(event.target)) {
+                if (dropdown.classList.contains("open")) {
+                    dropdown.classList.remove("open")
+                } else {
+                    dropdown.classList.add("open")
+                }
+            } else {
+                dropdown.classList.remove("open")
+            }
+        })
+    });
+
+    function updateValues(current) {
+        const rps = document.getElementById("rps")
+        const rtw = document.getElementById("rtw")
+        const spm = document.getElementById("spm")
+        const stw = document.getElementById("stw")
+        switch (current) {
+            case "Mario Kart World": {
+                rps.value = 12
+                rtw.value = ""
+                spm.value = 3
+                stw.value = 2
+            } break;
+
+            case "Mario Kart Deluxe": {
+                rps.value = 12
+                rtw.value = ""
+                spm.value = 1
+                stw.value = ""
+            } break;
+
+            case "Overwatch": {
+                rps.value = 7
+                rtw.value = 3
+                spm.value = 1
+                stw.value = ""
+            } break;
+
+            case "Marvel Rivals": {
+                rps.value = 5
+                rtw.value = 3
+                spm.value = 1
+                stw.value = ""
+            }
+        }
+    }
+
+    function post() {
+        const dropdowns = document.querySelectorAll(".new .dropdown")
+        const inputs = document.querySelectorAll(".new input")
+
+        const data = {}
+        let valid = true;
+
+        dropdowns.forEach(dropdown => {
+            const p = dropdown.querySelector("p:first-child")
+
+            if (p.getAttribute("data-placeholder") == p.innerHTML) {
+                valid = false
+                if (!dropdown.classList.contains("warned")) {
+                    dropdown.style.border = "2px solid #ee0000"
+                    dropdown.classList.add("warned")
+                    const warning = document.createElement("p")
+                    warning.style.fontSize = 10
+                    warning.style.color = "#ee0000"
+                    warning.innerText = `${p.getAttribute("data-placeholder")} must be selected`
+                    dropdown.parentElement.appendChild(warning)
+                    dropdown.addEventListener("focus", () => {
+                        dropdown.style.border = "none"
+                        dropdown.classList.remove("warned")
+                        warning.remove()
+                    }, { once: true })
+                }
+            }
+
+            data[dropdown.id] = dropdown.querySelector("p:first-child").innerHTML
+        })
+
+        inputs.forEach(input => {
+            data[input.id] = input.value
+            if (input.required && input.value == "") {
+                valid = false
+                if (!input.classList.contains("warned")) {
+                    input.style.border = "2px solid #ee0000"
+                    input.classList.add("warned")
+                    const warning = document.createElement("p")
+                    warning.style.fontSize = 10
+                    warning.style.color = "#ee0000"
+                    warning.innerText = `${input.id} is required`
+                    input.parentElement.appendChild(warning)
+                    input.addEventListener("focus", () => {
+                        input.style.border = "none"
+                        input.classList.remove("warned")
+                        warning.remove()
+                    }, { once: true })
+                }
+            }
+        })
+
+        if (!valid) return;
+
+        console.log(JSON.stringify(data))
+        fetch("/api/overlays", {
+            method: "POST",
+            body: JSON.stringify(data),
+            headers: {
+                "Content-Type": "application/json"
+            }
+        })
+    }
+
+    const colorQuery = document.querySelectorAll(".new .container .color")
+
+    colorQuery.forEach(color => {
+        color.lastElementChild.addEventListener("keyup", () => {
+            color.firstElementChild.style.backgroundColor = color.lastElementChild.value
+        })
+    })
+
+    const urlQuery = document.querySelectorAll(".new .container .url")
+
+    urlQuery.forEach(url => {
+        url.lastElementChild.addEventListener("keyup", () => {
+            url.firstElementChild.src = url.lastElementChild.value
+        })
+    })
+
+    const submit = document.getElementById("submit")
+
+    function submitInputs() {
+        post()
+        setTimeout(() => {
+            submit.addEventListener("click", () => submitInputs(), { once: true })
+        }, 1000)
+    }
+
+    submit.addEventListener("click", () => submitInputs(), { once: true }) 
+</script>
+<style>
+    * {
+        box-sizing: border-box;
+    }
+
+    .new button,
+    .new a {
+        text-decoration: none;
+        font-size: 14px;
+        border-radius: 10px;
+        width: 150px;
+        margin-top: 8px;
+        padding: 8px 12px;
+        border: 2px solid #007a39;
+        background-color: #006931;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-weight: bold;
+        min-height: 49px;
+        color: white;
+        cursor: pointer;
+    }
+
+    @media only screen and (max-width: 500px) {
+
+        .new button,
+        .new a {
+            width: 100%;
+        }
+    }
+
+    .new {
+        font-family: Arial;
+        color: white;
+    }
+
+    .new .container {
+        flex: 1 0 0;
+        background-color: #333;
+        border-radius: 10px;
+        margin-bottom: 10px;
+        border: 2px solid #444;
+    }
+
+    .new .container>div {
+        padding: 12px;
+        display: flex;
+        justify-content: space-between;
+        flex-direction: column;
+    }
+
+    .new div.row {
+        display: flex;
+        flex-direction: row;
+        gap: 12px;
+    }
+
+    .new .container>div>div {
+        flex: 1 0 0
+    }
+
+    @media only screen and (max-width: 500px) {
+        .new div.row {
+            flex-direction: column;
+        }
+    }
+
+    .new h1 {
+        font-size: 16px;
+        padding: 8px 12px;
+        margin: 0px;
+        border-bottom: 2px solid #444;
+    }
+
+    .new p {
+        font-size: 14px;
+        margin: 5px 0;
+        margin-top: 10px;
+    }
+
+    .new p:first-child {
+        margin-top: 0;
+    }
+
+    .new .dropdown {
+        width: 100%;
+        position: relative;
+        cursor: pointer;
+    }
+
+    .new .dropdown>div:last-child>p {
+        width: 100%;
+        padding: 16px;
+        padding-top: 16px;
+        background-color: #575757;
+        margin: 0;
+        display: none;
+    }
+
+    .new .dropdown>div:last-child {
+        position: absolute;
+        width: 100%
+    }
+
+    .new .dropdown.open>div:last-child>p {
+        display: block;
+    }
+
+    .new .dropdown>div:first-child {
+        min-height: 49px;
+        min-width: 100%;
+        padding: 0 16px;
+        border-radius: 10px;
+        background-color: #444;
+        border: none;
+        color: white;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .new .dropdown>div p {
+        margin: 0;
+    }
+
+    .new .dropdown>div:first-child p:last-child {
+        transition: rotate 0.25s ease;
+    }
+
+    .new .dropdown.open>div:first-child p:last-child {
+        rotate: 90deg;
+    }
+
+    .new .dropdown>div:first-child:hover,
+    .new .dropdown>div:last-child>p:hover {
+        background-color: #555;
+    }
+
+    .new .dropdown.open>div:first-child {
+        border-radius: 10px 10px 0 0;
+        background-color: #555;
+    }
+
+    .new .dropdown.open>p:last-child {
+        border-radius: 0 0 10px 10px;
+    }
+
+    .new input {
+        padding: 8px 12px;
+        width: 100%;
+        overflow: hidden;
+        min-height: 49px;
+        background-color: #444;
+        border-radius: 10px;
+        border: none;
+        color: white
+    }
+
+    .new input:hover {
+        background-color: #555;
+    }
+
+    @keyframes close {
+        0% {
+            display: block;
+        }
+
+        100% {
+            display: block;
+        }
+    }
+
+    @keyframes closeCorners {
+        0% {
+            display: block;
+        }
+
+        100% {
+            display: block;
+        }
+    }
+</style>

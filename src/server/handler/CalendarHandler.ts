@@ -20,7 +20,14 @@ export class CalendarHandler {
     public async getCalendarData() {
         if (!this.NECC_URI) return;
         console.log(this.NECC_URI)
-        const data = (await axios.get(this.NECC_URI)).data
+        let data = (await axios.get(this.NECC_URI)).data
+
+        try {
+            data = (await axios.get(this.NECC_URI)).data
+        } catch (error) {
+            console.log("Failed to fetch calendar data")
+            return this.cachedEvents;
+        }
 
         const lines: string[] = data.split("\n")
 

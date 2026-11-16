@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8" name="viewport" content="width=device-width, initial-scale=1">
+    <link id="table" rel="stylesheet" href="./table.css">
+    <script src="./table.js"></script>
+</head>
+
+<body>
+    <script>
+        console.log(document.head.querySelector("#table"))
+        const table = new Table(document.body)
+
+        table.addColumn("Overlay Name",1.5)
+        table.addColumn("Created By")
+        table.addColumn("Date Created")
+        table.addButton("../../../public/assets/images/icons/misc/link.svg")
+        table.addButton("../../../public/assets/images/icons/misc/pen.svg")
+        table.addButton("../../../public/assets/images/icons/misc/trash.svg","#450b0b","#ff0000")
+
+        table.addRow(["MKWORLD","Adam Evans", "12-06-2026"])
+        table.addRow(["now"])
+        table.addRow(["now"])
+  
+        window.addEventListener("resize", () => {
+            table.updateView()
+        })
+    </script>
+</body>
+
+</html>

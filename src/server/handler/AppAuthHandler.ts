@@ -1,6 +1,6 @@
-import { Request } from "express";
+import { Request, Response } from "express";
 import { Singleton } from "src/container/Singleton";
-import jwt from "jsonwebtoken";
+import jwt, { JwtPayload } from "jsonwebtoken";
 import { Logger } from "../logger/Logger";
 
 @Singleton
@@ -36,7 +36,29 @@ export class AppAuthHandler {
         }
     }
 
-    public checkAuth(req: Request): false | string {
+    public issueAccessToken(token: string, res: Response) {
+        try {
+            const refreshToken: JwtPayload = this.verifyToken(token, process.env.JWT_SECRET as string) as JwtPayload
+
+            const accessToken = this.createAccessToken(refreshToken.id)
+            Logger.log(`Access token issued: user ${refreshToken.id}`)
+
+            res.cookie("accessToken", accessToken, {
+                maxAge: 10 * 60 * 1000,
+                httpOnly: true,
+                domain: "localhost",
+                path: "/",
+                sameSite: "strict",
+                secure: process.env.BASE_URL?.includes("https"),
+            })
+
+            return refreshToken.id
+        } catch (error) {
+
+        }
+    }
+
+    public checkAuth(req: Request, res: Response): false | string {
         const cookies: Record<string, string> = {}
 
         req.headers.cookie?.split(';').forEach(cookie => {
@@ -45,7 +67,8 @@ export class AppAuthHandler {
         })
 
         if (!cookies.accessToken) {
-            return false;
+            if (!cookies.refreshToken) return false;
+            return this.issueAccessToken(cookies.refreshToken, res)
         }
 
         try {

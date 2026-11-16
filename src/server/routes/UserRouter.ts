@@ -1,16 +1,17 @@
 import { Singleton } from "src/container/Singleton";
 import { ExpressHandler } from "../handler/ExpressHandler";
-import { StorageHandler } from "../handler/StorageHandler";
+import { StorageHandler } from "../storage/StorageHandler";
 import { AppAuthHandler } from "../handler/AppAuthHandler";
 import { PermissionsHandler } from "../handler/PermissionsHandler";
 import { Permission } from "../types/Permission";
 import { DiscordHandler } from "../handler/DiscordHandler";
+import { UserStorageHandler } from "../storage/handlers/UserStorageHandler";
 
 @Singleton
 export class UserRouter {
     constructor(
         expressHandler: ExpressHandler,
-        storageHandler: StorageHandler,
+        userStorageHandler: UserStorageHandler,
         appAuthHandler: AppAuthHandler,
         permissionHandler: PermissionsHandler,
         discordHandler: DiscordHandler
@@ -20,7 +21,7 @@ export class UserRouter {
         app.get("/api/user/:id", async (req, res) => {
             let userId = req.params.id
 
-            const authenticatedUserId = appAuthHandler.checkAuth(req)
+            const authenticatedUserId = appAuthHandler.checkAuth(req, res)
             if (authenticatedUserId) {
                 if (userId == "me") {
                     userId = authenticatedUserId
@@ -33,11 +34,11 @@ export class UserRouter {
                     }
                 }
 
-                const user = await storageHandler.getUser(userId).getValue()
+                const user = await userStorageHandler.getUser(userId)
 
                 if (user) {
                     res.json({
-                        id: user.getID(),
+                        id: user.getDiscordID(),
                         username: user.getUsername(),
                         displayname: user.getDisplayName(),
                         permissions: await permissionHandler.getUserPermissions(userId)
@@ -54,13 +55,13 @@ export class UserRouter {
         app.get("/api/user/:id/avatar", async (req, res) => {
             let userId = req.params.id
 
-            const authenticatedUserId = appAuthHandler.checkAuth(req)
+            const authenticatedUserId = appAuthHandler.checkAuth(req, res)
             if (authenticatedUserId) {
                 if (userId == "me") {
                     userId = authenticatedUserId
                 }
 
-                const user = await storageHandler.getUser(userId).getValue()
+                const user = await userStorageHandler.getUser(userId)
 
                 if (user) {
                     const member = await discordHandler.getGuildMember(userId)

@@ -2,24 +2,38 @@
     <h1>Executive Overview</h1>
     <p>View status of services and infrastructure</p>
     <div>
-        <div>
+        <div data-href="/dashboard/teams">
             <h2>Teams</h2>
             <p>Create, add or remove members, and edit teams</p>
         </div>
-        <div>
+        <div data-href="/dashboard/members">
             <h2>Members</h2>
             <p>Add, remove, and manage existing members</p>
         </div>
-        <div>
+        <div data-href="/dashboard/applications">
             <h2>Applications</h2>
             <p>Approve or Deny membership applications</p>
         </div>
-        <div>
+        <div data-href="/dashboard/overlays">
             <h2>Overlays</h2>
             <p>Create, edit, and remove streaming overlays</p>
         </div>
+        <div data-href="/dashboard/totp">
+            <h2>Timed One Time Password</h2>
+            <p>Used for Two Factor access to services</p>
+        </div>
     </div>
 </div>
+<script>
+    const cards = document.querySelectorAll("#overview>div>div")
+
+    cards.forEach(card => {
+        console.log(card.getAttribute("data-href"))
+        card.addEventListener("click", () => {
+            setLocation(card.getAttribute("data-href"))
+        })
+    })
+</script>
 <style>
     body {
         background-color: #333;
@@ -65,6 +79,7 @@
         background-color: #404040;
         border: 2px solid #555;
         border-radius: 10px;
+        cursor: pointer;
     }
 
     @media only screen and (max-width: 1000px) {

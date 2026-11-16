@@ -2,9 +2,11 @@ import { Singleton } from "src/container/Singleton";
 import { TokenResponse } from "src/server/types/discord/TokenResponse";
 import axios from "axios"
 import { UserResponse } from "src/server/types/discord/UserResponse";
-import { StorageHandler } from "src/server/handler/StorageHandler";
+import { StorageHandler } from "src/server/storage/StorageHandler";
 import { Client, Events, GatewayIntentBits, Guild, GuildMember, PartialGuildMember, Role } from 'discord.js';
 import { CompleteableFuture } from "src/utility/CompletableFuture";
+import { User } from "../storage/types/User";
+import { UserStorageHandler } from "../storage/handlers/UserStorageHandler";
 
 @Singleton
 export class DiscordHandler {
@@ -17,14 +19,50 @@ export class DiscordHandler {
 
     private guild: CompleteableFuture<Guild> = new CompleteableFuture<Guild>();
 
-    constructor(private storageHandler: StorageHandler) {
+    constructor(private userStorage: UserStorageHandler) {
         const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMembers] });
 
         client.once(Events.ClientReady, c => {
             console.log(`Discord bot logged in as ${c.user.tag}`);
 
-            client.guilds.fetch(process.env.SERVER_ID as string).then(guild => {
+            client.guilds.fetch(process.env.SERVER_ID as string).then(async guild => {
                 this.guild.complete(guild)
+
+                const users = await guild.members.fetch()
+
+                users.forEach(async user => {
+                    console.log(user.user.displayName)
+                    const existingUser = await userStorage.getUser(user.id)
+                    console.log(user.roles.cache.has("1408207270981926974"))
+                    if (existingUser) {
+                        console.log("knownUser")
+                        let expiry = existingUser.getExpireTime()
+
+                        if (expiry) {
+                            expiry -= new Date().getTime()
+                        }
+
+                        const mergedUser = new User(
+                            existingUser.getDiscordID(),
+                            user.user.username,
+                            user.displayName,
+                            existingUser.getAccessToken(),
+                            existingUser.getRefreshToken(),
+                            expiry
+                        )
+
+                        userStorage.updateUser(mergedUser)
+                    } else if (user.roles.cache.has("1408207270981926974")) {
+                        console.log("newUser")
+                        const mergedUser = new User(
+                            user.id,
+                            user.user.username,
+                            user.user.displayName
+                        )
+
+                        userStorage.updateUser(mergedUser)
+                    }
+                })
             }).catch(err => {
                 throw new Error(`Failed to fetch guild: ${err instanceof Error ? err.message : String(err)}`);
             });
@@ -88,17 +126,17 @@ export class DiscordHandler {
     }
 
     public async addUserToServer(userID: string) {
-        const user = await this.storageHandler.getUser(userID).getValue()
+        const user = await this.userStorage.getUser(userID)
         const url = `https://discordapp.com/api/v8/guilds/${process.env.SERVER_ID}/members/${userID}`
 
-        if (user) {
-            if (new Date().getTime() > user.getExpireTime()) {
-                user.updateToken(await this.getToken(user.getRefreshToken()))
+        if (user && user.isLinked()) {
+            if (new Date().getTime() > (user.getExpireTime() as number)) {
+                user.updateToken(await this.getToken(user.getRefreshToken() as string))
             }
 
             const response = (await axios.post(url,
                 new URLSearchParams({
-                    token: user.getAccessToken()
+                    token: user.getAccessToken() as string
                 }),
                 {
                     headers: {

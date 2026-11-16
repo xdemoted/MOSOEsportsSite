@@ -22,9 +22,12 @@ export class CompleteableFuture<T> {
     }
 
     public async complete(value: T): Promise<void> {
+        if (this.value !== undefined) return;
+
+        this.value = value;
+
         for (const listener of this.listeners) {
             listener(value);
         }
-        this.value = value;
     }
 }

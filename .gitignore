@@ -1,5 +1,5 @@
 node_modules
 .env
-data.jsonl
-data.jsonl.tmp
+data.json
+data.json.tmp
 log.txt

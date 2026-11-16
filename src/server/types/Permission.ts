@@ -6,4 +6,5 @@ export enum Permission {
     VIEW_USERS = 16,
     MANAGE_USERS = 32,
     MANAGE_ROLES = 64,
+    VIEW_AUDIT = 128
 }

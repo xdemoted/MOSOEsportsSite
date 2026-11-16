@@ -2,10 +2,10 @@
 
 <html>
 
-<header>
+<head>
     <meta charset="UTF-8" name="viewport" content="width=device-width, initial-scale=1">
     <title>Dashboard</title>
-</header>
+</head>
 
 <body>
     <div class="header">
@@ -16,23 +16,21 @@
     <div class="content">
         <div>
             <nav class="open">
-                <div class="current">
-                    Page Name
-                </div>
+                <div class="current"></div>
                 <a href="/dashboard/">
-                    Overview
+                    <img src="/images/icons/pages/overview.svg">Overview
                 </a>
                 <a href="/dashboard/teams">
-                    Teams
+                    <img src="/images/icons/pages/teams.svg">Teams
                 </a>
                 <a href="/dashboard/members">
-                    Members
+                    <img src="/images/icons/pages/members.svg">Members
                 </a>
                 <a href="/dashboard/applications">
-                    Applications
+                    <img src="/images/icons/pages/applications.svg">Applications
                 </a>
                 <a href="/dashboard/overlays">
-                    Overlays
+                    <img src="/images/icons/pages/overlays.svg">Overlays
                 </a>
             </nav>
             <div class="module">
@@ -42,10 +40,13 @@
     </div>
 
     <style>
+        * {
+            box-sizing: border-box;
+        }
+
         body {
             margin: 0;
             background-color: #333;
-            overflow-y: hidden;
         }
 
         .header {
@@ -129,6 +130,25 @@
             display: none;
         }
 
+        nav .current p {
+            width: fit-content;
+            margin: 0;
+            margin-right: auto;
+        }
+
+        nav a img {
+            max-height: 16px;
+            max-width: 16px;
+            margin-right: 10px;
+        }
+
+        nav .current img {
+            max-height: 14px;
+            max-width: 14px;
+            transform: rotate(0deg);
+            transition: transform 0.25s ease;
+        }
+
         .module {
             width: calc(100% - 256px);
             min-height: 100px;
@@ -153,7 +173,8 @@
             }
 
             nav .current {
-                display: block;
+                display: flex;
+                flex-direction: row;
                 animation: none;
             }
 
@@ -163,14 +184,18 @@
             }
 
             nav.open a {
-                display: block;
+                display: flex;
                 animation-name: open;
                 animation-duration: 0.35s;
             }
 
             nav.open .current {
-                display: block;
+                display: flex;
                 animation: none;
+            }
+
+            nav.open .current .carot {
+                transform: rotate(180deg);
             }
 
             @keyframes close {
@@ -184,22 +209,29 @@
             }
 
             .module {
+                box-sizing: border-box;
                 width: 100%;
+                padding: 24px 16px;
+                position: relative;
             }
         }
     </style>
     <script>
+        function setLocation(path) {
+            window.location = window.location.protocol + "//" + window.location.host + path
+        }
+
         const nav = document.querySelector("nav")
         const expand = document.querySelector("nav .current")
         const pages = document.querySelectorAll("nav > a")
         let dataURL = "{{dataurl}}"
 
         function getPage() {
-            return window.location.href.slice(8).split("/")[2]
+            return window.location.pathname.split("/")[2]
         }
 
         function getName() {
-            return getPage().slice(0,1).toUpperCase() + getPage().slice(1)
+            return getPage().slice(0, 1).toUpperCase() + getPage().slice(1)
         }
 
         async function loadPage() {
@@ -221,6 +253,19 @@
                 if (module) {
                     module.innerHTML = html
                 }
+
+                module.querySelectorAll("script").forEach(script => {
+                    const newScript = document.createElement("script");
+                    Array.from(script.attributes).forEach(attr =>
+                        newScript.setAttribute(attr.name, attr.value)
+                    );
+
+                    newScript.appendChild(
+                        document.createTextNode(script.innerHTML)
+                    )
+
+                    script.parentNode.replaceChild(newScript, script);
+                })
             } catch (error) {
                 console.error('Error loading content:', error);
             }
@@ -234,7 +279,10 @@
         }
 
         if (expand && nav) {
-            expand.innerHTML = getName()
+            expand.innerHTML += `<img src=/images/icons/misc/hamburger.svg style="margin-right: 10px">`
+            expand.innerHTML += `<p>${getName()}</p>`
+            expand.innerHTML += `<img class="carot" src=/images/icons/misc/carot.svg>`
+
             expand.addEventListener("click", () => {
                 if (nav.className) nav.className = ""
                 else nav.className = "open"

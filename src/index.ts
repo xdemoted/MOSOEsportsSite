@@ -20,6 +20,7 @@ const requires = [
     "SERVER_ID",
     "JWT_SECRET",
     "JWT_ACCESS_SECRET",
+    "WSS_PORT"
 ]
 
 let missing = ""

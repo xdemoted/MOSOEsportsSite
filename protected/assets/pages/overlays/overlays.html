@@ -1,0 +1,50 @@
+<div></div>
+<a class="overlay" href="/dashboard/overlays/new">Create Overlay</a>
+<script type="module">
+    import {Table} from "/protected/modules/table/table.js"
+
+    const module = document.querySelector(".module")
+
+    if (module) {
+        const table = new Table(module.querySelector("div:last-of-type"),"#373737")
+
+        table.addColumn("Overlay Name",1.5)
+        table.addColumn("Created By")
+        table.addColumn("Date Created")
+        table.addButton("/images/icons/misc/link.svg")
+        table.addButton("/images/icons/misc/pen.svg")
+        table.addButton("/images/icons/misc/trash.svg","#450b0b","#ff0000")
+
+        table.addRow(["test","test","test","/api/overlays/23123798","/dashboard/overlays/23123798"])
+        table.addRow([])
+        table.addRow([])
+        table.addRow([])
+        table.addRow([])
+        table.addRow([])
+
+        table.updateView()
+    }
+</script>
+<style>
+    .overlay {
+        border-radius: 10px;
+        width: 150px;
+        height: 36px;
+        margin-top: 16px;
+        padding: 8px 12px;
+        border: 2px solid #007a39;
+        margin-left: auto;
+        background-color: #006931;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-weight: bold;
+    }
+
+    @media only screen and (max-width: 500px) {
+        .overlay {
+            width: 100%;
+            height: 49px;
+        }
+    }
+</style>
