@@ -1,0 +1,511 @@
+<div class="new">
+    <div id="matchmeta" class="container">
+        <h1>
+            Overlay Setup
+        </h1>
+        <div>
+            <div>
+                <p>Overlay Type</p>
+                <input disabled value="Mario Kart">
+            </div>
+        </div>
+        <div class="row">
+            <div style="flex: 1 0 0">
+                <p>Division</p>
+                <input id="division" placeholder="Division VII" disabled>
+            </div>
+            <div style="flex: 1 0 0">
+                <p>Match Name</p>
+                <input id="match" placeholder="West Central Playoffs" disabled>
+            </div>
+            <div style="flex: 1 0 0">
+                <p>Best Of</p>
+                <input id="bestOf" placeholder="Best of 5" disabled>
+            </div>
+        </div>
+    </div>
+
+    <div class="row" style="margin-bottom: 12px;">
+        <button id="swap">Swap Sides [Resets Changes]</button>
+    </div>
+
+    <div class="row">
+        <div class="container home">
+            <h1>MSSU ● Home</h1>
+            <div>
+                <p>Color</p>
+                <div class="color" style="height: 49px; display: flex;">
+                    <div
+                        style="border-radius: 10px 0 0 10px; min-width: 30px; min-height: 30px; background-color: #000;">
+                    </div>
+                    <input id="homeColor" value="" style="border-radius: 0 10px 10px 0;" disabled>
+                </div>
+            </div>
+            <div>
+                <p>Logo URL</p>
+                <div class="url"
+                    style="display: flex; background-color: #444; border-radius: 10px; overflow: hidden; min-height: 49px;">
+                    <img src="" style="height: 39px; border-radius: 100px; margin: 5px;">
+                    <input id="homeURL" value="" style="border-radius: 0px;" disabled>
+                </div>
+            </div>
+            <div>
+                <p>Descriptor</p>
+                <div class="row">
+                    <input id="homeDesc" value="Home" disabled>
+                </div>
+            </div>
+        </div>
+
+        <div class="container away">
+            <h1>MSSU ● Home</h1>
+            <div>
+                <p>Color</p>
+                <div class="color" style="height: 49px; display: flex;">
+                    <div
+                        style="border-radius: 10px 0 0 10px; min-width: 30px; min-height: 30px; background-color: #000;">
+                    </div>
+                    <input id="awayColor" value="" style="border-radius: 0 10px 10px 0;" disabled>
+                </div>
+            </div>
+            <div>
+                <p>Logo URL</p>
+                <div class="url"
+                    style="display: flex; background-color: #444; border-radius: 10px; overflow: hidden; min-height: 49px;">
+                    <img src="" style="height: 39px; border-radius: 100px; margin: 5px;">
+                    <input id="awayURL" value="" style="border-radius: 0px;" disabled>
+                </div>
+            </div>
+            <div>
+                <p>Descriptor</p>
+                <div class="row">
+                    <input id="awayDesc" value="Away" disabled>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <h1>Rounds</h1>
+        <div style="display: flex; gap: 10px;" id="scores">
+        </div>
+        <div style="display: flex; flex-direction: row; justify-content: right;">
+            <button id="addrow">Add Row</button>
+        </div>
+    </div>
+
+    <div class="" style="display: flex; flex-direction: row; justify-content: right; gap: 10px">
+        <h1>Status</h1>
+        <a href="/dashboard/overlays"
+            style="background-color: rgb(159, 0, 0); border: 2px solid rgb(176, 0, 0);">Cancel</a>
+        <button id="update">Update</button>
+    </div>
+</div>
+<script>
+    const handleIco = `<svg class="handle" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 50 50"><path stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 10 45 10M5 25 45 25M5 40 45 40"></path></svg>`
+    const trashIco = "<svg xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\" viewBox=\"0 0 90 90\"><path stroke=\"#ff3333\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"5\" d=\"M18 15 18 75C18 80 22.5 85 27 85L63 85C67.5 85 72 80 72 75L72 15M9 15 81 15M31.5 15 31.5 10C31.5 7.5 33.75 5 36 5L54 5C56.25 5 58.5 7.5 58.5 10L58.5 15M31.5 25 31.5 75M58.5 25 58.5 75\"></path></svg>"
+
+    const scores = document.querySelector('#scores')
+    const addrow = document.querySelector("#addrow")
+    const buttonSwap = document.querySelector("#swap")
+    const buttonUpdate = document.querySelector("#update")
+    let dragging = null;
+
+    buttonSwap.addEventListener('click', () => {
+        swap()
+    })
+
+    buttonUpdate.addEventListener('click', () => {
+        update()
+    })
+
+    load()
+
+    function createScoreRow(num1, num2) {
+        const row = document.createElement("div")
+        row.className = "row score"
+        row.draggable = true
+
+        row.innerHTML += handleIco
+        row.innerHTML += `<div><input value="${num1 ? num1 : ""}"></div>`
+        row.innerHTML += `<div><input value="${num2 ? num2 : ""}"></div>`
+        row.innerHTML += trashIco
+
+        row.lastElementChild.addEventListener('click', () => {
+            row.lastElementChild.parentElement.remove()
+        })
+
+        return row
+    }
+
+    async function load() {
+        const response = await fetch("/api/overlays/" + window.location.pathname.split("/").pop())
+
+        if (response.status == 404) {
+            document.querySelector(".module").innerHTML = "404 Not Found"
+        } else if (response.status == 500) {
+            document.querySelector(".module").innerHTML = "500 Unknown Error"
+        }
+
+        if (response.ok) {
+            data = await response.json()
+
+            updateInfo(data)
+        }
+    }
+
+    async function updateInfo(data) {
+        setTeam(1, data.homeTeam)
+        setTeam(0, data.awayTeam)
+        setMatchMeta(data.overlaytype, data.division, data.match, data.bestOf)
+        setRounds(data.rounds)
+    }
+
+    function setRounds(rounds) {
+        scores.innerHTML = ""
+        rounds.forEach(round => {
+            console.log(round)
+            scores.appendChild(createScoreRow(typeof round[0] == "number" ? round[0] : 0,typeof round[1] == "number" ? round[1] : 0))
+        })
+        if (scores.childNodes.length == 0) createScoreRow()
+    }
+
+    function setMatchMeta(type, division, match, bestOf) {
+        const metaContainer = document.getElementById("matchmeta")
+        const nodes = metaContainer.querySelectorAll("input")
+        nodes[0].value = type
+        nodes[1].value = division
+        nodes[2].value = match
+        nodes[3].value = bestOf
+    }
+
+    function setTeam(i, teamData) {
+        const team = document.querySelector(`.container.${i ? "home" : "away"}`)
+
+        team.firstElementChild.innerHTML = teamData.teamName + (i ? " ● Home" : " ● Away")
+        const children = team.querySelectorAll('input')
+        children[0].value = teamData.teamColor
+        children[1].value = teamData.teamURL
+        children[2].value = teamData.teamDesc
+    }
+
+    async function swap() {
+        try {
+            const overlayId = window.location.pathname.split("/").pop()
+            const response = await fetch("/api/overlay/swap", {
+                method: "POST",
+                body: JSON.stringify({ id: overlayId }),
+                headers: {
+                    "Content-Type": "application/json"
+                }
+            })
+            if (!response.ok) {
+                throw new Error(`Swap failed: ${response.status} ${response.statusText}`)
+            }
+            updateInfo(await response.json())
+        } catch (error) {
+            console.error("Unable to swap overlay sides:", error)
+        }
+    }
+
+    async function update() {
+        try {
+            const overlayId = window.location.pathname.split("/").pop()
+            const response = await fetch("/api/overlay/update", {
+                method: "POST",
+                body: JSON.stringify({ id: overlayId, rounds: getRounds()}),
+                headers: {
+                    "Content-Type": "application/json"
+                }
+            })
+            if (!response.ok) {
+                throw new Error(`Swap failed: ${response.status} ${response.statusText}`)
+            }
+            updateInfo(await response.json())
+        } catch (error) {
+            console.error("Unable to swap overlay sides:", error)
+        }
+    }
+
+    addrow.addEventListener('click', () => {
+        scores.appendChild(createScoreRow())
+    })
+
+    scores.addEventListener('dragstart', (e) => {
+        const target = e.target instanceof Element
+            ? e.target.closest('.row[draggable="true"]')
+            : null;
+        if (!target || !scores.contains(target)) return;
+
+        dragging = target;
+        dragging.classList.add('dragging')
+    })
+
+    scores.addEventListener('dragend', (e) => {
+        if (dragging) dragging.classList.remove('dragging');
+        getDraggableElements(scores).forEach(item => item.classList.remove('over'));
+        dragging = null;
+    });
+
+    scores.addEventListener('dragover', (e) => {
+        if (!dragging) return;
+        e.preventDefault();
+        const draggingOverItem = getDragAfterElement(scores, e.clientY);
+
+        // Remove .over from all items
+        getDraggableElements(scores).forEach(item => item.classList.remove('over'));
+
+        if (draggingOverItem) {
+            draggingOverItem.classList.add('over');
+            scores.insertBefore(dragging, draggingOverItem);
+        } else {
+            scores.appendChild(dragging);
+        }
+    });
+
+    function getDraggableElements(container) {
+        return Array.from(container.children).filter(child =>
+            child.matches('.row[draggable="true"]') && child !== dragging
+        );
+    }
+
+    function getDragAfterElement(container, y) {
+        return getDraggableElements(container).reduce((closest, child) => {
+            const box = child.getBoundingClientRect();
+            const offset = y - box.top - box.height / 2;
+            if (offset < 0 && offset > closest.offset) {
+                return { offset: offset, element: child };
+            } else {
+                return closest;
+            }
+        }, { offset: Number.NEGATIVE_INFINITY }).element;
+    }
+
+    function getRounds() {
+        const rounds = []
+        scores.childNodes.forEach(score => {
+            console.log(score)
+            const home = score.childNodes[1].firstChild.value
+            const away = score.childNodes[2].firstChild.value
+
+            const homeNum = parseInt(home)
+            const awayNum = parseInt(away)
+
+            rounds.push([Number.isNaN(homeNum) ? 0 : homeNum, Number.isNaN(awayNum) ? 0 : awayNum])
+        })
+        return rounds
+    }
+</script>
+<style>
+    * {
+        box-sizing: border-box;
+    }
+
+    .dragging {
+        opacity: 0.7;
+    }
+
+    .new .handle {
+        background-color: rgba(128, 128, 128, 0);
+    }
+
+    .new svg {
+        min-height: 39px;
+        max-width: 39px;
+        padding: 5px;
+        margin: 5px;
+        background-color: rgb(44, 0, 0);
+        border-radius: 10px;
+        cursor: pointer;
+    }
+
+    .new button,
+    .new a {
+        text-decoration: none;
+        font-size: 14px;
+        border-radius: 10px;
+        width: 150px;
+        margin-top: 8px;
+        padding: 8px 12px;
+        border: 2px solid #00537a;
+        background-color: #004869;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-weight: bold;
+        min-height: 49px;
+        color: white;
+        cursor: pointer;
+    }
+
+    @media only screen and (max-width: 500px) {
+
+        .new button,
+        .new a {
+            width: 100%;
+        }
+    }
+
+    .new {
+        font-family: Arial;
+        color: white;
+    }
+
+    .new .container {
+        flex: 1 0 0;
+        background-color: #333;
+        border-radius: 10px;
+        margin-bottom: 10px;
+        border: 2px solid #444;
+    }
+
+    .new .container>div {
+        padding: 12px;
+        display: flex;
+        justify-content: space-between;
+        flex-direction: column;
+    }
+
+    .new div.row {
+        display: flex;
+        flex-direction: row;
+        gap: 12px;
+    }
+
+    .new div.row>* {
+        flex: 1 0 0
+    }
+
+    .new .container>div>div {
+        flex: 1 0 0
+    }
+
+    @media only screen and (max-width: 500px) {
+        .new div.row {
+            flex-direction: column;
+        }
+    }
+
+    .new h1 {
+        font-size: 16px;
+        padding: 8px 12px;
+        margin: 0px;
+        border-bottom: 2px solid #444;
+    }
+
+    .new p {
+        font-size: 14px;
+        margin: 5px 0;
+        margin-top: 10px;
+    }
+
+    .new p:first-child {
+        margin-top: 0;
+    }
+
+    .new .dropdown {
+        width: 100%;
+        position: relative;
+        cursor: pointer;
+    }
+
+    .new .dropdown>div:last-child>p {
+        width: 100%;
+        padding: 16px;
+        padding-top: 16px;
+        background-color: #575757;
+        margin: 0;
+        display: none;
+    }
+
+    .new .dropdown>div:last-child {
+        position: absolute;
+        width: 100%
+    }
+
+    .new .dropdown.open>div:last-child>p {
+        display: block;
+    }
+
+    .new .dropdown>div:first-child {
+        min-height: 49px;
+        min-width: 100%;
+        padding: 0 16px;
+        border-radius: 10px;
+        background-color: #444;
+        border: none;
+        color: white;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .new .dropdown>div p {
+        margin: 0;
+    }
+
+    .new .dropdown>div:first-child p:last-child {
+        transition: rotate 0.25s ease;
+    }
+
+    .new .dropdown.open>div:first-child p:last-child {
+        rotate: 90deg;
+    }
+
+    .new .dropdown>div:first-child:hover,
+    .new .dropdown>div:last-child>p:hover {
+        background-color: #555;
+    }
+
+    .new .dropdown.open>div:first-child {
+        border-radius: 10px 10px 0 0;
+        background-color: #555;
+    }
+
+    .new .dropdown.open>p:last-child {
+        border-radius: 0 0 10px 10px;
+    }
+
+    .new input {
+        padding: 8px 12px;
+        width: 100%;
+        overflow: hidden;
+        min-height: 49px;
+        background-color: #444;
+        border-radius: 10px;
+        border: none;
+        color: white
+    }
+
+    .new input:hover {
+        background-color: #555;
+    }
+
+    .new input:disabled {
+        background-color: #444;
+    }
+
+    @keyframes close {
+        0% {
+            display: block;
+        }
+
+        100% {
+            display: block;
+        }
+    }
+
+    @keyframes closeCorners {
+        0% {
+            display: block;
+        }
+
+        100% {
+            display: block;
+        }
+    }
+
+    #scores .row {
+        flex-direction: row;
+    }
+</style>

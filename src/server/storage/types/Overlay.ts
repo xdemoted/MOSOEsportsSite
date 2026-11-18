@@ -13,15 +13,25 @@ export class Overlay implements DataRecord {
         public createdAt: number,
 
         public overlaytype: string,
-        public t1: string,
-        public t1c: string,
-        public t1u: string,
-        public t2: string,
-        public t2c: string,
-        public t2u: string,
-        public rps: string,
-        public rtw: string,
-        public spm: string,
-        public stw: string
-    ) {}
+        public division: string,
+        public match: string,
+        public bestOf: string,
+
+        public homeTeam: OverlayTeam,
+        public awayTeam: OverlayTeam,
+
+        public roundsPerSeries: string,
+        public roundsToWin: string,
+        public seriesPerMatch: string,
+        public seriesToWin: string
+    ) { }
+}
+
+export class OverlayTeam {
+    constructor(
+        public teamName: string,
+        public teamColor: string,
+        public teamURL: string,
+        public teamDesc: string,
+    ) { }
 }

@@ -20,15 +20,29 @@
                     </div>
                 </div>
             </div>
+            <div class="row">
+                <div style="flex: 1 0 0">
+                    <p>Division</p>
+                    <input id="division" placeholder="Division VII">
+                </div>
+                <div style="flex: 1 0 0">
+                    <p>Match Name</p>
+                    <input id="match" placeholder="West Central Playoffs">
+                </div>
+                <div style="flex: 1 0 0">
+                    <p>Best Of</p>
+                    <input id="bestOf" placeholder="Best of 5">
+                </div>
+            </div>
         </div>
     </div>
 
     <div class="row">
         <div class="container">
-            <h1>Team 1</h1>
+            <h1>Home</h1>
             <div>
                 <p>Name</p>
-                <input id="t1" value="MSSU" required>
+                <input id="homeName" placeholder="MSSU Gold" required>
             </div>
             <div>
                 <p>Color</p>
@@ -36,7 +50,7 @@
                     <div
                         style="border-radius: 10px 0 0 10px; min-width: 30px; min-height: 30px; background-color: #006937;">
                     </div>
-                    <input id="t1c" value="#006937" style="border-radius: 0 10px 10px 0;" required>
+                    <input id="homeColor" placeholder="#006937" style="border-radius: 0 10px 10px 0;" required>
                 </div>
             </div>
             <div>
@@ -44,16 +58,23 @@
                 <div class="url"
                     style="display: flex; background-color: #444; border-radius: 10px; overflow: hidden; min-height: 49px;">
                     <img src="" style="height: 39px; border-radius: 100px; margin: 5px;">
-                    <input id="t1u" value="" style="border-radius: 0px;">
+                    <input id="homeURL" value="" style="border-radius: 0px;" required>
+                </div>
+            </div>
+            <div>
+                <p>Descriptor</p>
+                <div class="row">
+                    <input id="homeDesc" value="Home" style="flex: 0.75 0 0;" required>
+                    <input id="homeDesc2" placeholder="Seed 1" style="flex: 1.5 0 0">
                 </div>
             </div>
         </div>
 
         <div class="container">
-            <h1>Team 2</h1>
+            <h1>Away</h1>
             <div>
                 <p>Name</p>
-                <input id="t2" value="" required>
+                <input id="awayName" value="" required>
             </div>
             <div>
                 <p>Color</p>
@@ -61,12 +82,23 @@
                     <div
                         style="border-radius: 10px 0 0 10px; min-width: 30px; min-height: 30px; background-color: #000;">
                     </div>
-                    <input id="t2c" value="" style="border-radius: 0 10px 10px 0;" required>
+                    <input id="awayColor" value="" style="border-radius: 0 10px 10px 0;" required>
                 </div>
             </div>
             <div>
                 <p>Logo URL</p>
-                <input id="t2u" value="">
+                <div class="url"
+                    style="display: flex; background-color: #444; border-radius: 10px; overflow: hidden; min-height: 49px;">
+                    <img src="" style="height: 39px; border-radius: 100px; margin: 5px;">
+                    <input id="awayURL" value="" style="border-radius: 0px;" required>
+                </div>
+            </div>
+            <div>
+                <p>Descriptor</p>
+                <div class="row">
+                    <input id="awayDesc" value="Away" style="flex: 0.75 0 0;" required>
+                    <input id="awayDesc2" placeholder="Seed 1" style="flex: 1.5 0 0">
+                </div>
             </div>
         </div>
     </div>
@@ -76,21 +108,21 @@
         <div class="row">
             <div>
                 <p>Rounds per Series</p>
-                <input id="rps" value="" required>
+                <input id="roundsPerSeries" value="" required>
             </div>
             <div>
                 <p>Rounds to Win (Leave blank for default)</p>
-                <input id="rtw" value="">
+                <input id="roundsToWin" value="">
             </div>
         </div>
         <div class="row">
             <div>
                 <p>Number of Series</p>
-                <input id="spm" value="" required>
+                <input id="seriesPerMatch" value="" required>
             </div>
             <div>
                 <p>Series to Win (Leave blank for default)</p>
-                <input id="stw">
+                <input id="seriesToWin">
             </div>
         </div>
     </div>
@@ -231,7 +263,7 @@
         }).then(async (response) => {
             if (response.ok) {
                 window.location.assign(
-                    '/api/overlays/'+ (await response.text())
+                    '/api/overlays/' + (await response.text())
                 )
             }
         })
@@ -353,12 +385,12 @@
         width: 100%;
         position: relative;
         cursor: pointer;
+        padding-bottom: 12px;
     }
 
     .new .dropdown>div:last-child>p {
         width: 100%;
         padding: 16px;
-        padding-top: 16px;
         background-color: #575757;
         margin: 0;
         display: none;

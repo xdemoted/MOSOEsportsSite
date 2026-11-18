@@ -1,0 +1,316 @@
+<head>
+    <link href="https://fonts.googleapis.com/css2?family=Aldrich&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --team-1-color: rgb(214, 14, 0);
+            --team-1-url: url("https://images.leagueos.gg/teams/aoe75goi48twu2rm8mami6cc8/65ef677975c24e86c705c716") --team-1-name: "Team 1";
+            --team-2-color: rgb(23, 105, 57);
+            --team-2-url: url("https://images.leagueos.gg/teams/aoe75goi48twu2rm8mami6cc8/65ef677975c24e86c705c716") --team-2-name: "Team 2";
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            width: 1920px;
+            height: 1080px;
+        }
+
+        .scoreline {
+            position: absolute;
+            max-height: 75px;
+            width: 1920px;
+            display: flex;
+            justify-content: space-between;
+            font-family: 'Aldrich';
+        }
+
+        .scoreline>div:first-child {
+            height: 50px;
+            width: 465px;
+            background-color: rgb(14, 14, 14);
+            clip-path: polygon(0 0, 97.1% 0, 100% 100%, 0 100%);
+            display: flex;
+            gap: 5px;
+        }
+
+        .scoreline>div:last-child {
+            height: 50px;
+            width: 465px;
+            background-color: rgb(14, 14, 14);
+            clip-path: polygon(2.9% 0, 100% 0, 100% 100%, 0 100%);
+
+            display: flex;
+        }
+
+        .scoreline>.team {
+            margin-top: 30px;
+        }
+
+        .roundscoreline {
+            height: 122%;
+            width: 12%;
+            background-color: blue;
+            clip-path: polygon(0 1vw, 1vw 0, calc(100% - 1vw) 0, 100% 1vw, 90% 100%, 10% 100%);
+        }
+
+        .logo {
+            height: 50px;
+            aspect-ratio: 1 / 1;
+        }
+
+        .scoreline>div div {
+            flex: 1 0 0;
+            height: 100%;
+            background-color: transparent;
+            display: flex;
+        }
+
+        .teamtext {
+            color: white;
+            white-space: nowrap;
+            display: flex;
+            justify-content: center;
+        }
+
+        .column {
+            display: flex;
+            flex-direction: column;
+            flex: 1 0 0;
+        }
+
+        h1 {
+            height: 65%;
+            color: white;
+            white-space: nowrap;
+            margin: 0;
+            padding: 0;
+            font-size: 30px;
+        }
+
+        p {
+            color: white;
+            font-size: 15px;
+            padding: 0px;
+            margin: 0;
+        }
+
+        .right {
+            display: flex;
+            justify-content: right;
+            margin-right: 5px;
+        }
+
+        .scoretext {
+            color: rgb(0, 0, 0);
+        }
+
+        .header {
+            background-color: rgb(14, 14, 14);
+            width: 437px;
+            clip-path: polygon(0 0, 100% 0, calc(100% - 18px) 32px, calc(74% + 6px) 32px, calc(74% - 10px) 100%, calc(26% + 10px) 100%, calc(26% - 6px) 32px, 18px 32px);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .header>div:first-child {
+            width: 437px;
+            max-height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: space-evenly;
+        }
+
+        .scores {
+            width: 204px;
+            max-height: 25px;
+            margin-top: 12px;
+            gap: 5px;
+        }
+
+        .scores>div {
+            background-color: #222;
+            padding: 2px;
+        }
+
+        .scores>div>div {
+            background-color: #141414;
+        }
+
+        .scores>div:first-child {
+            width: 30px;
+            clip-path: polygon(0 0, 100% 0, 100% 100%, 10px 100%);
+        }
+
+        .scores>div:first-child>div {
+            clip-path: polygon(1px 0, 100% 0, 100% 100%, 9.5px 100%);
+        }
+
+        .scores>div:last-child {
+            width: 30px;
+            clip-path: polygon(0 0, 100% 0, calc(100% - 10px) 100%, 0 100%);
+        }
+
+        .scores>div:last-child>div {
+            clip-path: polygon(0 0, calc(100% - 1px) 0, calc(100% - 9.5px) 100%, 0 100%);
+        }
+
+        .scores>div.home>div {
+            background-color: color-mix(in srgb, var(--team-1-color) 80%, black);
+        }
+
+        .scores>div.home {
+            background-color: color-mix(in srgb, var(--team-1-color) 50%, black);
+        }
+
+        .scores>div.away>div {
+            background-color: color-mix(in srgb, var(--team-2-color) 80%, black);
+        }
+
+        .scores>div.away {
+            background-color: color-mix(in srgb, var(--team-2-color) 50%, black);
+        }
+    </style>
+</head>
+
+<script>
+    let homeName
+    let homeDescriptor
+    let homeIMG
+
+    let awayName
+    let awayDescriptor
+    let awayIMG
+
+    let headerDiv
+    let scores
+
+    let homeColor = "red"
+    let awayColor = "blue"
+
+    document.addEventListener('DOMContentLoaded', () => {
+        homeName = document.querySelector(".home h1")
+        homeDescriptor = document.querySelector(".home p")
+        homeIMG = document.querySelector(".home img")
+
+        awayName = document.querySelector(".away h1")
+        awayDescriptor = document.querySelector(".away p")
+        awayIMG = document.querySelector(".away img")
+
+        headerDiv = document.querySelector(".header>div:first-child")
+        scores = document.querySelector(".scores")
+
+        const socket = new WebSocket('ws://localhost:25552');
+        socket.onopen = () => {
+            socket.send(`id;${window.location.pathname.split("/").pop()}`)
+        }
+        socket.onmessage = ev => {
+            if (ev.data.startsWith("{")) {
+                try {
+                    console.log("parse")
+                    const data = JSON.parse(ev.data)
+                    const home = data.homeTeam
+                    const away = data.awayTeam
+                    const root = document.documentElement;
+                    root.style.setProperty('--team-1-color', home.teamColor);
+                    root.style.setProperty('--team-2-color', away.teamColor);
+                    setTeams(home.teamName, home.teamDesc, home.teamURL, away.teamName, away.teamDesc, away.teamURL)
+                    setSubHeaderText(data.division, data.match, data.bestOf)
+                    updateScoreByRounds(data.rounds)
+                } catch (error) {
+
+                }
+            }
+        }
+    })
+
+    function setTeams(home, homeD, homeURL, away, awayD, awayURL) {
+        homeName.innerHTML = home
+        homeDescriptor.innerHTML = homeD
+        homeIMG.src = homeURL
+        awayName.innerHTML = away
+        awayDescriptor.innerHTML = awayD
+        awayIMG.src = awayURL
+    }
+
+    function setSubHeaderText(div, name, bestOf) {
+        console.log(div)
+        headerDiv.innerHTML = `<p>${div}</p><p style="font-size: 15px;">${name}</p><p>${bestOf}</p>`
+    }
+
+    function updateScoreByRounds(rounds) {
+        let home = 0
+        let away = 0
+        rounds.forEach(round => {
+            if (round[0] > round[1]) home++
+            if (round[0] < round[1]) away++
+        });
+        setScore(home, away)
+    }
+
+    function setScore(home, away) {
+        const children = scores.querySelectorAll(".scores > div")
+        home = Math.min(3, home)
+        away = Math.min(3, away)
+
+        for (let i = 0; i < children.length; i++) {
+            const score = children[i];
+            console.log(score)
+            if (i < home) score.className = "home"
+            else if (i > children.length - 1 - away) score.className = "away"
+            else score.className = ""
+        }
+    }
+</script>
+
+<body>
+    <div class="scoreline">
+        <div class="team home">
+            <img class="logo" src="https://images.leagueos.gg/teams/74ekfz4znhno6c2oqtgx0pm80/64c9476b8f40a5736671fbc3">
+            <div class="column">
+                <h1>Fresno State Blue</h1>
+                <p>Home ● Seed 1</p>
+            </div>
+        </div>
+        <div class="header">
+            <div>
+                <p>Division VII</p>
+                <p style="font-size: 15px;">West Central Playoffs</p>
+                <p>Best of 5</p>
+            </div>
+            <div class="scores">
+                <div>
+                    <div></div>
+                </div>
+                <div>
+                    <div></div>
+                </div>
+                <div>
+                    <div></div>
+                </div>
+                <div>
+                    <div></div>
+                </div>
+                <div>
+                    <div></div>
+                </div>
+                <div>
+                    <div></div>
+                </div>
+            </div>
+        </div>
+        <div class="team away">
+            <div class="column">
+                <h1 class="right">MSSU Gold</h1>
+                <p class="right">Away ● Seed 8</p>
+            </div>
+            <img class="logo" src="https://images.leagueos.gg/teams/aoe75goi48twu2rm8mami6cc8/65ef677975c24e86c705c716">
+        </div>
+    </div>
+</body>
+
+</html>

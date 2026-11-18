@@ -20,7 +20,7 @@ export class CalendarHandler {
     public async getCalendarData() {
         if (!this.NECC_URI) return;
         console.log(this.NECC_URI)
-        let data = (await axios.get(this.NECC_URI)).data
+        let data
 
         try {
             data = (await axios.get(this.NECC_URI)).data
